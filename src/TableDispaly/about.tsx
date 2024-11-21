@@ -2,10 +2,8 @@ import { useContext, useState } from "react";
 import { MyContext } from "../App";
 
 import { getTextValues } from "../utils/utilFunctions";
-import { Button, Form } from "react-bootstrap";
+import { Form } from "react-bootstrap";
 import { compareValues, groupByOptions } from "../utils/dataDump";
-import { retrieveOriginalQuery } from "../BL/FetchFunctions";
-import Select from "react-select/base";
 
 const dataBaseOptions2 = [
   "Masters earns more than Bachelors on avarage (Stack Overflow)",
@@ -107,7 +105,6 @@ const About: React.FC = () => {
         }}
       >
         <div className="font-size">Examples</div>
-
         <Form.Select
           disabled={!isChangeable}
           style={{

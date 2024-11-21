@@ -1,64 +1,28 @@
 import { ACS7dict, groupByOptions } from "../utils/dataDump";
 
-export async function retrieveOriginalQuery(
-  var1: string,
-  var2: string,
-  tempSelectedDatabase: string,
-  tempSelectedGroupBy: number
-) {
-  let groupbyTextValue =
-    groupByOptions[tempSelectedDatabase][tempSelectedGroupBy];
-  console.log(tempSelectedDatabase);
-
+export async function retrieveOriginalQuery() {
   const sleep = (ms: number) =>
     new Promise((resolve) => setTimeout(resolve, ms));
-  var isUpdated = false;
 
-  console.log(groupbyTextValue);
+  try {
+    const response = await fetch("./src/assets/demo_test_ORIGINAL.json");
+    const text = await response.json();
+    console.log(text);
 
-  while (!isUpdated) {
-    try {
-      const response = await fetch("./src/assets/demo_test_ORIGINAL.txt");
-      const text = await response.text();
-      const cleanedText = text.replace(/[{}]/g, "");
-      const cleanedText2 = cleanedText.replace(/[']/g, "");
-      var splittedText = cleanedText2.split(":");
-      splittedText = [
-        splittedText[0],
-        ...splittedText[1].split(","),
-        splittedText[2],
-      ];
-      console.log(splittedText);
-      var rVar1 = splittedText[0];
-      var rVar2 = splittedText[2];
-      if (tempSelectedDatabase != "Stack Overflow") {
-        rVar1 =
-          ACS7dict[groupbyTextValue[tempSelectedGroupBy]][
-            parseInt(splittedText[0])
-          ];
-        rVar2 =
-          ACS7dict[groupbyTextValue[tempSelectedGroupBy]][
-            parseInt(splittedText[2])
-          ];
-      }
-      //jsonData = JSON.parse(text); // Replace single quotes with double quotes
-
-      console.log(var1);
-      console.log(rVar1);
-      console.log(var2);
-      console.log(rVar2);
-
-      if (var1 == rVar1 && var2 == rVar2) {
-        console.log("FOUND IT");
-
-        isUpdated = true;
-      } else {
-        await sleep(100);
-      }
-    } catch (error) {
-      await sleep(100);
-      console.error("Error fetching the file:", error);
+    //jsonData = JSON.parse(text); // Replace single quotes with double quotes
+    const values = (Object.values(text) as number[]).map((value: number) =>
+      parseFloat(value.toFixed(3))
+    );
+    console.log(values);
+    if (values.length == 0) {
+      return [0, 0];
+    } else {
+      return values;
     }
+  } catch (error) {
+    await sleep(100);
+    console.error("Error fetching the file:", error);
+    return [0, 0];
   }
 }
 export async function StopCalculationWrapper(filepath: number) {

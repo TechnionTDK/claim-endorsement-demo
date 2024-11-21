@@ -74,9 +74,8 @@
   padding: 0.2vw;
 }
 
-#DataDisplay-chart_size {
-}
 #DataDisplay-chart {
+  width: 300px;
   display: flex;
   flex-direction: column;
   justify-content: center;

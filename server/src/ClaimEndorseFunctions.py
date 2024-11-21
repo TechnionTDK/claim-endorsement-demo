@@ -1213,22 +1213,6 @@ def calc_anova_for_attrs(df, attr_iterable, target_attr, bucket_dict):
     return f_stat, anova_pvalue
 
 
-def remove_outliers(df, attr):
-    before = len(df)
-    df = df.dropna(subset=[attr]).copy()
-    print(f"removed {before - len(df)} rows where {attr} is none")
-    values = df[attr]
-    q1, q3 = values.quantile([0.25, 0.75])
-    IQR = q3 - q1
-    LW = q1 - 1.5 * IQR
-    UW = q3 + 1.5 * IQR
-    len_orig = len(df)
-    df = df[df[attr] >= LW]
-    df = df[df[attr] <= UW]
-    len_new = len(df)
-    print(
-        f"Removed Outliers: {len_orig - len_new} Rows Deleted, {round((len_orig - len_new) / len_orig * 100, 2)}% of the dataset")
-    return df
 
 
 def calc_mi(df, attr, is_numeric):
@@ -1364,7 +1348,7 @@ def setup_cherrypicking(df, exclude_list, is_numeric, trans_dict, start_time, do
                         agg_type=AGG_TYPE, max_atoms=MAX_ATOMS, db_name=DATABASE_NAME, data_path=DATA_PATH,
                         dataframe_path=DATAFRAME_PATH):
     attr_list = list(set(df.columns).difference(set(exclude_list + [target_attr, grp_attr])))
-    for g in compare_list[1:]: # for each group
+    for g in compare_list[1:]:  # for each group
         if len(df[(df[grp_attr] == g) & (~df[target_attr].isna())]) == 0:
             print(f"Group {grp_attr}={g} has only empty values in {target_attr}. The search will have no results.")
             return None

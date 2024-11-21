@@ -389,3 +389,56 @@ def safe_is_nan(x):
     if type(x) == str:
         return False
     return np.isnan(x)
+
+
+def age_bucketize(x):
+    if x < 18:
+        return "<18"
+    if x < 25:
+        return "18-24"
+    if x < 35:
+        return "25-34"
+    if x < 45:
+        return "35-44"
+    if x < 55:
+        return "45-54"
+    if x < 65:
+        return "56-64"
+    if x >= 65:
+        return ">65"
+
+
+
+def remove_outliers(df, attr, iqr_factor=1.5):
+    before = len(df)
+    df = df.dropna(subset=[attr]).copy()
+    print(f"removed {before - len(df)} rows where {attr} is none")
+    values = df[attr]
+    q1, q3 = values.quantile([0.25, 0.75])
+    IQR = q3 - q1
+    LW = q1 - iqr_factor * IQR
+    UW = q3 + iqr_factor * IQR
+    print(f"lower: {LW}, upper: {UW}")
+    len_orig = len(df)
+    df = df[df[attr] >= LW]
+    df = df[df[attr] <= UW]
+    len_new = len(df)
+    print(
+        f"Removed Outliers: {len_orig - len_new} Rows Deleted, {round((len_orig - len_new) / len_orig * 100, 2)}% of the dataset")
+    return df
+
+
+def get_outliers(df, attr, iqr_factor=1.5):
+    before = len(df)
+    df = df.dropna(subset=[attr]).copy()
+    print(f"removed {before - len(df)} rows where {attr} is none")
+    values = df[attr]
+    q1, q3 = values.quantile([0.25, 0.75])
+    IQR = q3 - q1
+    LW = q1 - iqr_factor * IQR
+    UW = q3 + iqr_factor * IQR
+    print(f"lower: {LW}, upper: {UW}")
+    df1 = df[(df[attr] < LW) | (df[attr] > UW)]
+    print(
+        f"Found {len(df1)} outlier rows, {round(len(df1) / len(df) * 100, 2)}% of the dataset")
+    return df1.index

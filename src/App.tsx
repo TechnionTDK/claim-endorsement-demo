@@ -53,6 +53,7 @@ import { useUpdateRef } from "./utils/MyRefHook";
 import { addChart } from "./utils/addChart";
 import { message } from "./UtilComps/message";
 import { Button } from "react-bootstrap";
+import DataDisplayOriginalQuery from "./TableDispaly/dataDisplayOriginalQuery";
 
 export const MyContext = React.createContext<ContextType | null>(null);
 
@@ -88,7 +89,7 @@ function App() {
   const [loadingStates, setLoadingStates] = useState<loadingStates[]>([]);
   const [predicateText, setPredicateText] = useState<JSX.Element>(<div></div>);
   const [sortingOptions, setSortingOptions] = useState<number[]>([0, 0]);
-
+  const [originalQueryData, setOriginalQueryData] = useState<number[]>([0, 0]);
   const normRef = useUpdateRef(normalizedData);
   const normRef2 = useUpdateRef(databaseData);
   const normIndex = useUpdateRef(index);
@@ -130,6 +131,7 @@ function App() {
 
   const startCalculation = async () => {
     try {
+      setOriginalQueryData([0, 0]);
       setIsChangeable(false);
       setHighlightedIndex("-1");
       setHoveredData(null);
@@ -153,6 +155,13 @@ function App() {
         var x = await StartIntervalFetch(groupDataBool);
         setIntervalData(x);
       }, 1000);
+      setTimeout(async () => {
+        var originalQueryData = await retrieveOriginalQuery();
+        do {
+          originalQueryData = await retrieveOriginalQuery();
+        } while (originalQueryData[0] == 0 && originalQueryData[1] == 0);
+        setOriginalQueryData([...originalQueryData]);
+      }, 2000);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
@@ -307,6 +316,7 @@ function App() {
     <div id="mainDiv">
       <MyContext.Provider
         value={{
+          originalQueryData,
           clearIntervalWrapper,
           maxDiff,
           isChangeable: isChangeable,
@@ -373,6 +383,12 @@ function App() {
             className="seperation-Line"
           ></div>
           <div>
+            {originalQueryData[0] == 0 && originalQueryData[1] == 0 ? (
+              <div></div>
+            ) : (
+              <DataDisplayOriginalQuery></DataDisplayOriginalQuery>
+            )}
+
             <InfiniteScroll
               dataLength={top}
               next={() =>

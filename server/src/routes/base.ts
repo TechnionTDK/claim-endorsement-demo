@@ -734,10 +734,23 @@ router.get("/LLM", async (req, res) => {
   }
   res.status(200).send({ result });
 });
+function emptyFile() {
+  const filePath = path.join(
+    __dirname,
+    "../../../src/assets/demo_test_ORIGINAL.json"
+  );
+  fs.writeFile(filePath, JSON.stringify({}), (err) => {
+    if (err) {
+      console.error("Error emptying the file:", err);
+    }
+    console.log("File emptied successfully");
+  });
+}
 router.get("/", async (req, res) => {
   try {
     console.log("2---------------------------------------------------");
-
+    emptyFile();
+    console.log("3---------------------------------------------------");
     const dbname = req.query.dbname;
     console.log(dbname);
     const aggtype = (req.query.aggtype as string).toLowerCase();

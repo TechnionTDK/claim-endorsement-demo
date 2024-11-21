@@ -5,7 +5,11 @@ import time
 import sqlalchemy
 import pandas as pd
 from tqdm import tqdm
+
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+from utils import age_bucketize, remove_outliers, get_outliers
+from Trends.DT_pattern_finder import DecisionTreePatternFinder
 from QueryRunner import SQLEngineSingleton
 #from ClaimEndorseFunctions import Bucket
 # from SO_Experimenting import value_cleaning_SO, is_multivalue_attr, safe_split
@@ -120,7 +124,7 @@ class TrendCherryPicker(object):
 
     def evaluate_coverage_query(self, pred):
         if self.use_sql_db:
-            coverage_query_result = self.engine.execute(self.coverage_query.format(cond=pred))
+            coverage_query_result = self.engine.execute(self.coverage_query.format(cond=disjunct_to_sql_cond(pred)))
             coverage = list(coverage_query_result)[0][0]
             return coverage
         # evaluate against df
@@ -224,6 +228,7 @@ class TrendCherryPicker(object):
         with open(output_path, "w") as f:
             order_str = t.join([str(x) for x in self.partial_order])
             f.write(f"excluded_pred{t}coverage{t}num_atoms{t}num_empty{t}{order_str}\n")
+        #preds = [([('Country', '=', 'United States of America')], [('OfficeStackAsyncHaveWorkedWith', '=', 'Adobe Workfront')])]
         for pred in tqdm(preds):
             res, coverage, num_atoms, num_empty = self.check_view(pred)
             if res is not None:
@@ -290,9 +295,20 @@ def read_SO_and_conf():
             'agg': 'AVG',
             'gb_attr': 'edlevelnum',
             'outcome_attr': 'ConvertedCompYearly',
-            #'include': ['Gender', 'DevType', 'OrgSize'],
+            # 'include': ['Gender', 'DevType', 'OrgSize'],
             'include': ['MainBranch', 'Employment', 'RemoteWork', 'CodingActivities', 'LearnCode', 'LearnCodeOnline', 'LearnCodeCoursesCert', 'YearsCode', 'YearsCodePro', 'DevType', 'OrgSize', 'PurchaseInfluence', 'BuyNewTool', 'Country', 'LanguageHaveWorkedWith', 'LanguageWantToWorkWith', 'DatabaseHaveWorkedWith', 'DatabaseWantToWorkWith', 'PlatformHaveWorkedWith', 'PlatformWantToWorkWith', 'WebframeHaveWorkedWith', 'WebframeWantToWorkWith', 'MiscTechHaveWorkedWith', 'MiscTechWantToWorkWith', 'ToolsTechHaveWorkedWith', 'ToolsTechWantToWorkWith', 'NEWCollabToolsHaveWorkedWith', 'NEWCollabToolsWantToWorkWith', 'OpSysProfessional use', 'OpSysPersonal use', 'VersionControlSystem', 'VCInteraction', 'OfficeStackAsyncHaveWorkedWith', 'OfficeStackAsyncWantToWorkWith', 'OfficeStackSyncHaveWorkedWith', 'OfficeStackSyncWantToWorkWith', 'Blockchain', 'Age', 'Gender', 'Trans', 'Sexuality', 'Ethnicity', 'Accessibility', 'MentalHealth', 'ICorPM', 'WorkExp', 'TimeSearching'],
-            'max_atoms': 3,
+            'string_cols': ['MainBranch', 'Employment', 'RemoteWork', 'CodingActivities', 'LearnCode', 'OrgSize',
+                            'LearnCodeOnline', 'LearnCodeCoursesCert', 'DevType', 'PurchaseInfluence', 'BuyNewTool',
+                            'Country', 'LanguageHaveWorkedWith', 'LanguageWantToWorkWith', 'DatabaseHaveWorkedWith',
+                            'DatabaseWantToWorkWith', 'PlatformHaveWorkedWith', 'PlatformWantToWorkWith',
+                            'WebframeHaveWorkedWith', 'WebframeWantToWorkWith', 'MiscTechHaveWorkedWith',
+                            'MiscTechWantToWorkWith', 'ToolsTechHaveWorkedWith', 'ToolsTechWantToWorkWith',
+                            'NEWCollabToolsHaveWorkedWith', 'NEWCollabToolsWantToWorkWith', 'OpSysProfessional use',
+                            'OpSysPersonal use', 'VersionControlSystem', 'VCInteraction', 'OfficeStackAsyncHaveWorkedWith',
+                            'OfficeStackAsyncWantToWorkWith', 'OfficeStackSyncHaveWorkedWith', 'OfficeStackSyncWantToWorkWith',
+                            'Blockchain', 'Age', 'Gender', 'Trans', 'Sexuality', 'Ethnicity', 'Accessibility', 'MentalHealth',
+                            'ICorPM', 'TimeSearching'],
+            'max_atoms': 2,
             'enable_disjunctions': True,
             'enable_dnf': False,
             'numeric': ["YearsCode", "YearsCodePro", "ConvertedCompYearly", "WorkExp"],
@@ -331,24 +347,62 @@ def read_german_and_conf():
             'coverage_query': ""}
     return df, conf
 
+
+def read_hm_and_conf():
+    a = pd.read_csv("data/hm/articles.csv", index_col=0)
+    c = pd.read_csv("data/hm/customers.csv", index_col=0)
+    t = pd.read_csv("data/hm/transactions.csv", index_col=0)
+    t['month'] = t.t_dat.apply(lambda x: int(x.split("-")[1]))
+    # Maybe add day?
+    c['age_group'] = c['age'].apply(age_bucketize)
+    c['age_group_order'] = c['age_group'].apply({'25-34': 5, '35-44': 4, '45-54': 3, '56-64': 2, '>65': 1}.get)
+    t2 = t[t["month"] == 11]
+    m = a.merge(t2, on='article_id').merge(c, on="customer_id")
+
+    conf = {'database_name': '',
+            'use_sql': False,
+            'agg': 'count',
+            'gb_attr': 'age_group_order',
+            'outcome_attr': 't_dat',
+            'include': [
+                'prod_name', 'product_type_no', 'product_type_name', 'product_group_name', 'graphical_appearance_no',
+                'graphical_appearance_name', 'colour_group_name', 'perceived_colour_value_name',
+                'perceived_colour_master_name', 'department_no', 'department_name', 'index_code', 'index_name',
+                'index_group_no', 'index_group_name', 'section_no', 'section_name', 'garment_group_no',
+                'garment_group_name', 'detail_desc', 'price', 'sales_channel_id', 'FN', 'Active',
+                'club_member_status', 'fashion_news_frequency', 'postal_code'],
+            'max_atoms': 2,
+            'enable_disjunctions': True,
+            'enable_dnf': False,
+            'numeric': ['price'],
+            'gb_query': "",
+            'coverage_query': ""}
+    return m, conf
+
+
 if __name__ == '__main__':
-    #query = """SELECT "EdLevel", AVG("ConvertedCompYearly") FROM my_table WHERE "ConvertedCompYearly" IS NOT NULL
-    #           AND NOT ({cond}) GROUP BY "EdLevel"; """
-    #coverage_query = """SELECT COUNT("ConvertedCompYearly") FROM my_table WHERE "ConvertedCompYearly" IS NOT NULL AND {cond}; """
-    #partial_order = ["Bachelor’s degree", "Master’s degree", "Other doctoral degree (Ph.D., Ed.D., etc.)"]
-    # exclude_list = ["ResponseId", "CompTotal", "CompFreq",
-    #                 "Currency", "SOAccount", "NEWSOSites", "SOVisitFreq", "SOPartFreq", "SOComm", "TBranch",
-    #                 "TimeAnswering", "Onboarding", "ProfessionalTech", "SurveyLength", "SurveyEase",
-    #                 "ConvertedCompYearly"]
-    # exclude_list += ["Knowledge_" + str(i) for i in range(1, 8)]
-    # exclude_list += ["Frequency_" + str(i) for i in range(1, 4)]
-    # exclude_list += ["TrueFalse_" + str(i) for i in range(1, 4)]
-    # is_numeric = ["YearsCode", "YearsCodePro", "ConvertedCompYearly", "WorkExp"]
-    # df = remove_outliers(df, "ConvertedCompYearly")
-    df, conf = read_SO_and_conf()
+    # stack overflow + decision tree + outlier removal
+    # df, conf = read_SO_and_conf()
+    # ids_to_remove = get_outliers(df, 'ConvertedCompYearly')
+    # #ids_to_remove = [61044, 72941, 202, 62027, 70523, 18923, 62224, 66496, 47934, 27426, 20250, 30824, 40790, 1799, 10331, 1889, 39216, 61968, 31042, 51600, 11639, 20938, 50406, 14795, 21415, 21480, 37697, 47086, 62235, 53498, 66811, 67034, 67855, 8344, 16127, 39444, 20165, 309, 1741, 5233]
+    # real_ids_to_remove = [id for id in ids_to_remove if id in df['ResponseId'].values]
+    # print(f"already removed during outlier removal: {set(ids_to_remove).difference(set(real_ids_to_remove))}, remaining: {real_ids_to_remove}")
+    # conf["ids_to_remove"] = real_ids_to_remove
+    # dt = DecisionTreePatternFinder(df, conf)
+    # attrs = list(set(dt.find_prominent_attributes()))
+    # print(f"Focusing search on these attributes: {attrs}")
+    # conf["include"] = attrs
+    # output_path = "data/SO/trend_results/edlevel_trend_preds_outliers_exclusion_3atom_conj+disj.tsv"
+
+    # German credit
     #df, conf = read_german_and_conf()
+    # output_path = "data/german_credit/trend_results/employment_trend_preds_3atom_disj.tsv"
+
+    # H&M
+    df, conf = read_hm_and_conf()
+    output_path = "data/german_credit/trend_results/age_count_items_trend_preds_2atom.tsv"
+
     tcp = TrendCherryPicker(df, conf)
     # tcp.generate_possible_views()
-    tcp.search_trend_views("data/SO/trend_results/edlevel_trend_preds_exclusion_3atom_conj+disj.tsv")
-    #tcp.search_trend_views("data/german_credit/trend_results/employment_trend_preds_3atom_disj.tsv")
+    tcp.search_trend_views(output_path)
 
