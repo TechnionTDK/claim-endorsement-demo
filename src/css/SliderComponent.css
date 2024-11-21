@@ -1,0 +1,48 @@
+.top_div {
+  margin-left: 20px;
+  margin-right: 20px;
+}
+.flex-row-mySlider {
+  display: flex;
+  gap: "10px";
+}
+.attribute-Name-mySlider {
+  width: 150px;
+}
+.info-popup-slider-parameter {
+  position: absolute;
+  top: 175px;
+  right: -67px;
+}
+.slider-parameter-container {
+  position: relative;
+  display: inline-block;
+
+  background-color: #f9f9f9;
+}
+.slider-parameter-title {
+  letter-spacing: 0.5px;
+  font-weight: bold;
+  margin: 0;
+}
+.no-margin {
+  margin: 0px;
+}
+
+.info-popup-div {
+  width: 300px;
+  height: 300px;
+  position: fixed;
+  background-color: rgba(0, 0, 0, 0.9);
+  color: white;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  z-index: 1000;
+
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transition: opacity 0.3s ease-in-out;
+  opacity: 1;
+  top: 430px;
+  right: 70vw;
+}

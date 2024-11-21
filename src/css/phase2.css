@@ -1,0 +1,26 @@
+.phase2-title {
+  letter-spacing: 0.5px;
+  font-weight: bold;
+  margin: 0;
+}
+.compare-Div-phase2 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+.info-popup-phase2 {
+  position: fixed;
+  top: 175px;
+  right: 69vw;
+}
+.phase2-container {
+  position: relative;
+  display: inline-block;
+  padding: 1vh;
+  padding-right: 0px;
+  padding-top: 0px;
+  margin-top: 5px;
+
+  background-color: #f9f9f9;
+}

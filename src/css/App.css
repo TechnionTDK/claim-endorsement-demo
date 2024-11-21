@@ -1,0 +1,183 @@
+@import url("https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap");
+
+#root {
+  text-align: center;
+}
+#mainDiv {
+  display: flex;
+
+  height: 100vh;
+  width: 100%;
+}
+#subDiv {
+  align-items: center;
+}
+.attrHeader_title {
+  font-size: 20px;
+  font-weight: bold;
+}
+.seperation-Line {
+  margin-bottom: 5px;
+  height: 2px;
+  background-color: #afafaf;
+}
+.seperator-Div {
+  padding-top: 0px;
+}
+.half {
+  width: 50%;
+}
+.full {
+  width: 100%;
+}
+#data_divs {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+#setup_div {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr 1fr 0.6fr; /* Two equal columns */
+  grid-template-rows: 1;
+  width: 80vw !important;
+}
+
+#setup_div > div:nth-child(even) {
+  height: 100%;
+  background-color: #f0f0f0;
+  border-left: 5px solid rgb(148, 148, 148);
+  /* Add border to each grid item */
+}
+#setup_div > div:nth-child(odd) {
+  height: 100%;
+  background-color: #e9e9e9;
+  border-left: 5px solid rgb(148, 148, 148);
+  /* Add border to each grid item */
+}
+.font-size {
+  font-size: 0.8vw !important;
+}
+.title-font {
+  font-size: 1vw;
+}
+#predicate_div {
+  font-weight: bold;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0.2vw;
+}
+#attr1_div {
+  margin-top: 0.53vw;
+  padding: 0.2vw;
+}
+#value1_div {
+  margin-top: 0.53vw;
+
+  padding: 0.2vw;
+}
+#attr2_div {
+  margin-top: 0.53vw;
+  font-weight: bold;
+
+  padding: 0.2vw;
+}
+#value2_div {
+  margin-top: 0.53vw;
+  font-weight: bold;
+
+  padding: 0.2vw;
+}
+
+#spacing_div {
+  padding-right: 4.8vh;
+}
+#time_div {
+  font-weight: bold;
+  padding: 5px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+#no_data {
+  font-size: 20px;
+  font-weight: bold;
+  height: 200px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.dropdown {
+  position: relative;
+  color: #333;
+  cursor: default;
+}
+
+.dropdown .arrow {
+  border-color: #999 transparent transparent;
+  border-style: solid;
+  border-width: 5px 5px 0;
+  content: " ";
+  display: block;
+  height: 0;
+  margin-top: 0.3rem;
+  position: absolute;
+  right: 10px;
+  top: 14px;
+  width: 0;
+}
+
+.dropdown .arrow.open {
+  border-color: transparent transparent #999;
+  border-width: 0 5px 5px;
+}
+
+.dropdown .selected-value input {
+  line-height: 1.5;
+  font-size: 1rem;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 2px;
+  box-sizing: border-box;
+  cursor: default;
+  outline: none;
+  padding: 8px 52px 8px 10px;
+  transition: all 200ms ease;
+  width: 100%;
+}
+
+.dropdown .options {
+  display: none;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.06);
+  box-sizing: border-box;
+  margin-top: -1px;
+  max-height: 200px;
+  overflow-y: auto;
+  position: absolute;
+  top: 100%;
+  width: 100%;
+  z-index: 1000;
+  -webkit-overflow-scrolling: touch;
+}
+
+.dropdown .options.open {
+  display: block;
+}
+
+.dropdown .option {
+  box-sizing: border-box;
+  color: rgba(51, 51, 51, 0.8);
+  cursor: pointer;
+  display: block;
+  padding: 8px 10px;
+}
+
+.dropdown .option.selected,
+.dropdown .option:hover {
+  background-color: #f2f9fc;
+  color: #333;
+}

@@ -1,0 +1,48 @@
+.more-info-icon {
+  position: absolute;
+  top: -5px;
+  right: -15px;
+  width: 15px;
+  height: 15px;
+  background-color: #007bff;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1vh;
+  font-weight: bold;
+}
+
+.info-popup {
+  width: 15vw;
+  background-color: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  z-index: 1000;
+
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transition: opacity 0.3s ease-in-out;
+  opacity: 0;
+}
+.show {
+  opacity: 1;
+}
+.explanation-info-popup {
+  padding: 10px;
+  height: 120px;
+  background-color: rgba(86, 86, 86, 0.8);
+  color: white;
+  text-align: center;
+  align-content: center;
+  position: absolute;
+  top: -62.5px;
+  right: -516.5px;
+
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transition: opacity 0.3s ease-in-out;
+  width: 22vw;
+}

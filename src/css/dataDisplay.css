@@ -1,0 +1,112 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  width: 80vw;
+  padding: 0 !important;
+  border-bottom: 5px solid #ffffff;
+}
+.recursiveDataDiv-border {
+  border-bottom: 5px solid #ffffff;
+}
+.DataDisplay-row {
+  display: grid;
+  grid-template-columns: 1.52fr 1fr 1fr 1fr 0.6fr; /* Two equal columns */
+  grid-template-rows: 1;
+  color: var(--text-color, #333);
+  width: 80vw !important;
+  transition: all 0.2s ease;
+}
+.DataDisplay-row > div {
+  border-right: 3px solid #b9b9b9;
+}
+.DataDisplay-highlight {
+  background-color: var(--selected-background-color, #a0a0a0);
+  color: var(--selected-text-color, #e9e9e9);
+  border: 6px solid var(--selected-border-color, #3a3a3a);
+  transition: all 0.2s ease;
+}
+#DataDisplay-predicate {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  padding: 0.2vw;
+}
+#DataDisplay-attr {
+  display: flex;
+
+  flex-direction: column;
+  justify-content: center;
+
+  padding: 0.2vw;
+}
+#DataDisplay-attr {
+  display: flex;
+  flex-direction: column;
+
+  justify-content: center;
+  text-align: center;
+  padding: 0.2vw;
+}
+#DataDisplay-value {
+  display: flex;
+  flex-direction: column;
+
+  justify-content: center;
+
+  padding: 0.2vw;
+}
+#DataDisplay-value {
+  display: flex;
+
+  flex-direction: column;
+  justify-content: center;
+
+  padding: 0.2vw;
+}
+#DataDisplay-time {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  padding: 0.2vw;
+}
+
+#DataDisplay-chart_size {
+}
+#DataDisplay-chart {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.son {
+  border-left: 10px solid var(--selected-border-color, #0084ff);
+}
+#custom-outline-secondary {
+  color: #000000; /* Secondary color */
+  border: 1px solid #6c757d; /* Secondary color border */
+  background-color: transparent;
+  transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
+}
+
+#custom-secondary:hover {
+  color: #ffffff;
+  background-color: #8c00ff; /* Secondary color */
+  border-color: #8c00ff; /* Secondary color border */
+}
+#custom-secondary {
+  color: #ffffff;
+  background-color: #8c00ff; /* Secondary color */
+  border-color: #8c00ff; /* Secondary color border */
+}
+
+#custom-outline-secondary:hover {
+  color: #ffffff;
+  background-color: #8c00ff; /* Secondary color */
+  border-color: #8c00ff; /* Secondary color border */
+}
+.folded_display {
+  margin-left: 30px;
+}

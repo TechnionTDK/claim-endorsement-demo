@@ -1,0 +1,15 @@
+.main-Div-HoverData {
+  position: fixed;
+  top: 20px;
+  right: 25px;
+  width: 15vw;
+  padding: 20px;
+  background-color: #f9f9f9;
+  color: #333;
+  font-family: "'Segoe UI', sans-serif";
+  font-size: 1rem;
+  border-radius: 10px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  border: 1px solid #ddd;
+  z-index: 1000;
+}

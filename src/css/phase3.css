@@ -1,0 +1,28 @@
+.top-Selection-phase3 {
+  margin-bottom: 10px;
+}
+.buttons-Div-phase3 {
+  display: flex;
+  justify-content: center;
+  gap: 5px;
+}
+.info-popup-phase3 {
+  position: fixed;
+  top: 430px;
+  right: 69vw;
+}
+.phase3-container {
+  position: relative;
+  display: inline-block;
+  padding: 1vh;
+  padding-right: 0px;
+  padding-top: 0px;
+  margin-top: 5px;
+
+  background-color: #f9f9f9;
+}
+.phase3-title {
+  letter-spacing: 0.5px;
+  font-weight: bold;
+  margin: 0;
+}
