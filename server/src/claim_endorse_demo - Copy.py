@@ -114,7 +114,6 @@ def verify_group_values(g1, g2, grp_attr, col_to_values_dict):
     raise Exception(f"{g1} or {g2} not in value list for {grp_attr}.\nValid values are: {grp_attr_values}.")
 
 
-
 def claim_endorse(db_name, agg_type, grp_attr, g1, g2, output_path):
     conf = db_name_to_config[db_name]
     df = pd.read_csv(conf["dataframe_path"], index_col=0)
@@ -147,8 +146,15 @@ def get_original_query_result(db_name, agg_type, grp_attr, g1, g2, output_path):
     query = sqlalchemy.text(query_string)
     engine = connect_sql_db(conf["database_name"])
     query_result = engine.execute(query)
+    res = dict([x for x in query_result])
+    #res_with_string_keys = {str(k): v for k, v in res.items()}
     with open(output_path, "w") as out:
-        out.write(str(dict([x for x in query_result])))
+        out.write("{")
+        for i, k in enumerate(res.keys()):
+            out.write(f'"{k}": {res[k]}')
+            if i < len(res)-1:
+                out.write(",")
+        out.write("}")
 
 
 if __name__ == "__main__":

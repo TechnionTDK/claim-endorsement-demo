@@ -140,21 +140,32 @@ def get_original_query_result(db_name, agg_type, grp_attr, g1, g2, output_path):
     conf = db_name_to_config[db_name]
     target_attr = conf["target_attr"]
     agg_func = agg_type.upper() if agg_type != "mean" else "AVG"
-    query_string = f"""SELECT "{grp_attr}", {agg_func}("{target_attr}")
+    query_string = f"""SELECT "{grp_attr}", {agg_func}("{target_attr}"), count("{target_attr}")
                        FROM my_table 
                        WHERE "{grp_attr}" IN ('{g1}','{g2}') GROUP BY "{grp_attr}";"""
     query = sqlalchemy.text(query_string)
     engine = connect_sql_db(conf["database_name"])
     query_result = engine.execute(query)
-    res = dict([x for x in query_result])
-    #res_with_string_keys = {str(k): v for k, v in res.items()}
+    res = [x for x in query_result]
+    print(res)
     with open(output_path, "w") as out:
-        out.write("{")
-        for i, k in enumerate(res.keys()):
-            out.write(f'"{k}": {res[k]}')
+        out.write('{')
+        out.write('"agg": {')
+        for i, t in enumerate(res):
+            out.write(f'"{t[0]}": {t[1]}')
+            if i < len(res)-1:
+                out.write(",")
+        out.write("},\n")
+        out.write('"count": {')
+        for i, t in enumerate(res):
+            out.write(f'"{t[0]}": {t[2]}')
             if i < len(res)-1:
                 out.write(",")
         out.write("}")
+        out.write('}')
+        
+
+
 
 
 if __name__ == "__main__":
