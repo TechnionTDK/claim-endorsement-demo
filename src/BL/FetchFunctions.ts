@@ -8,21 +8,24 @@ export async function retrieveOriginalQuery() {
     const response = await fetch("./src/assets/demo_test_ORIGINAL.json");
     const text = await response.json();
     console.log(text);
-
-    //jsonData = JSON.parse(text); // Replace single quotes with double quotes
-    const values = (Object.values(text) as number[]).map((value: number) =>
+    const agg = (Object.values(text.agg) as number[]).map((value: number) =>
       parseFloat(value.toFixed(3))
     );
-    console.log(values);
-    if (values.length == 0) {
-      return [0, 0];
+    const count = (Object.values(text.count) as number[]).map(
+      (value: number) => value
+    );
+    //jsonData = JSON.parse(text); // Replace single quotes with double quotes
+
+    if (agg.length == 0 || count.length == 0) {
+      await sleep(1000);
+      return [0, 0, 0, 0];
     } else {
-      return values;
+      return [count[0], count[1], agg[0], agg[1]];
     }
   } catch (error) {
-    await sleep(100);
+    await sleep(1000);
     console.error("Error fetching the file:", error);
-    return [0, 0];
+    return [0, 0, 0, 0];
   }
 }
 export async function StopCalculationWrapper(filepath: number) {

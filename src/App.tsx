@@ -89,7 +89,9 @@ function App() {
   const [loadingStates, setLoadingStates] = useState<loadingStates[]>([]);
   const [predicateText, setPredicateText] = useState<JSX.Element>(<div></div>);
   const [sortingOptions, setSortingOptions] = useState<number[]>([0, 0]);
-  const [originalQueryData, setOriginalQueryData] = useState<number[]>([0, 0]);
+  const [originalQueryData, setOriginalQueryData] = useState<number[]>([
+    0, 0, 0, 0,
+  ]);
   const normRef = useUpdateRef(normalizedData);
   const normRef2 = useUpdateRef(databaseData);
   const normIndex = useUpdateRef(index);
@@ -131,7 +133,7 @@ function App() {
 
   const startCalculation = async () => {
     try {
-      setOriginalQueryData([0, 0]);
+      setOriginalQueryData([0, 0, 0, 0]);
       setIsChangeable(false);
       setHighlightedIndex("-1");
       setHoveredData(null);
@@ -159,7 +161,12 @@ function App() {
         var originalQueryData = await retrieveOriginalQuery();
         do {
           originalQueryData = await retrieveOriginalQuery();
-        } while (originalQueryData[0] == 0 && originalQueryData[1] == 0);
+        } while (
+          originalQueryData[0] == 0 &&
+          originalQueryData[1] == 0 &&
+          originalQueryData[2] == 0 &&
+          originalQueryData[3] == 0
+        );
         setOriginalQueryData([...originalQueryData]);
       }, 2000);
     } catch (error) {
@@ -383,7 +390,10 @@ function App() {
             className="seperation-Line"
           ></div>
           <div>
-            {originalQueryData[0] == 0 && originalQueryData[1] == 0 ? (
+            {originalQueryData[0] == 0 &&
+            originalQueryData[1] == 0 &&
+            originalQueryData[2] == 0 &&
+            originalQueryData[3] == 0 ? (
               <div></div>
             ) : (
               <DataDisplayOriginalQuery></DataDisplayOriginalQuery>

@@ -14,38 +14,63 @@ const DataDisplayOriginalQuery: React.FC = () => {
   const { originalQueryData } = context!;
   // Define the translation object with the specified type
   return (
-    <div className="container">
+    <div
+      className="container"
+      style={{
+        backgroundColor: "#B0C4DE",
+        width: "100wv !important",
+      }}
+    >
       <div className={`DataDisplay-row  `} key={`DataDisplay-Original`}>
         <div className={`font-size `} id="DataDisplay-predicate">
           <Predicate
             showIcon={false}
             func={() => {}}
             folded={false}
-            predicate={<div>how does the claim hold in the database?</div>}
+            predicate={
+              <div style={{ fontSize: "24px" }}>
+                how does the claim hold in the database?
+              </div>
+            }
           ></Predicate>
         </div>
         <DataHeader
           dataValues={{
-            N1: originalQueryData[0],
-            N2: originalQueryData[1],
+            N1: originalQueryData[1],
+            N2: originalQueryData[0],
+            mean1: originalQueryData[3],
+            mean2: originalQueryData[2],
           }}
           index={0}
-          aggregateFunction={"Count"}
+          aggregateFunction={""}
         />
         <DataHeader
           dataValues={{
-            N1: originalQueryData[0],
-            N2: originalQueryData[1],
+            N1: originalQueryData[1],
+            N2: originalQueryData[0],
+            mean1: originalQueryData[3],
+            mean2: originalQueryData[2],
           }}
           index={1}
-          aggregateFunction={"Count"}
+          aggregateFunction={""}
         />
 
-        <div id="DataDisplay-chart">
+        <div
+          id="DataDisplay-chart"
+          style={{
+            backgroundColor: "#B0C4DE",
+          }}
+        >
           <div id="DataDisplay-chart_size"></div>
         </div>
 
-        <div className="font-size" id="DataDisplay-time">
+        <div
+          className="font-size"
+          id="DataDisplay-time"
+          style={{
+            backgroundColor: "#B0C4DE",
+          }}
+        >
           <div></div>
         </div>
       </div>

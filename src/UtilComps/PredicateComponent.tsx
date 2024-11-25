@@ -34,6 +34,7 @@ const PredicateComponent: React.FC<PredicateComponentProps> = ({
             display: "flex",
             flexDirection: "column",
             justifyContent: "center",
+            fontSize: "30px !important",
           }}
         >
           {a1}
