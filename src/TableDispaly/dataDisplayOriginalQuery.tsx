@@ -36,20 +36,20 @@ const DataDisplayOriginalQuery: React.FC = () => {
         </div>
         <DataHeader
           dataValues={{
-            N1: originalQueryData[1],
-            N2: originalQueryData[0],
-            mean1: originalQueryData[3],
-            mean2: originalQueryData[2],
+            N1: originalQueryData[0],
+            N2: originalQueryData[1],
+            mean1: originalQueryData[2],
+            mean2: originalQueryData[3],
           }}
           index={0}
           aggregateFunction={""}
         />
         <DataHeader
           dataValues={{
-            N1: originalQueryData[1],
-            N2: originalQueryData[0],
-            mean1: originalQueryData[3],
-            mean2: originalQueryData[2],
+            N1: originalQueryData[0],
+            N2: originalQueryData[1],
+            mean1: originalQueryData[2],
+            mean2: originalQueryData[3],
           }}
           index={1}
           aggregateFunction={""}

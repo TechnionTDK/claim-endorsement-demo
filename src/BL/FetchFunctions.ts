@@ -1,5 +1,6 @@
-import { ACS7dict, groupByOptions } from "../utils/dataDump";
+import { compareTitle } from "../utils/dataDump";
 
+let filepaths = ["SO", "flights", "Folkstable/SevenStates"];
 export async function retrieveOriginalQuery() {
   const sleep = (ms: number) =>
     new Promise((resolve) => setTimeout(resolve, ms));
@@ -33,9 +34,12 @@ export async function StopCalculationWrapper(filepath: number) {
     console.log("this is the filepath");
     console.log(filepath);
 
-    await fetch(`http://localhost:3005/project/?pathname=${filepath}`, {
-      method: "DELETE",
-    });
+    await fetch(
+      `http://localhost:3005/claimendorsement/?pathname=${filepaths[filepath]}`,
+      {
+        method: "DELETE",
+      }
+    );
   } catch (error) {
     alert("Error in fetching data");
     throw new Error("Error in fetching data");
@@ -52,8 +56,12 @@ export async function StartCalculationWrapper(
     if (agg == "Avg") {
       agg = "avg";
     }
+    console.log(
+      `http://localhost:3005/claimendorsement/?dbname=${db}&aggtype=${agg}&grpattr=${grp}&g1=${g1}&g2=${g2}`
+    );
+
     await fetch(
-      `http://localhost:3005/project/?dbname=${db}&aggtype=${agg}&grpattr=${grp}&g1=${g1}&g2=${g2}`
+      `http://localhost:3005/claimendorsement/?dbname=${db}&aggtype=${agg}&grpattr=${grp}&g1=${g1}&g2=${g2}`
     );
   } catch (error) {
     alert("Error in fetching data");
@@ -62,7 +70,7 @@ export async function StartCalculationWrapper(
 }
 export async function GetData(index: number, dbIndex: number) {
   const response = await fetch(
-    `http://localhost:3005/project/send-data?prev=${index}&dbIndex=${dbIndex}`
+    `http://localhost:3005/claimendorsement/send-data?prev=${index}&dbName=${filepaths[dbIndex]}`
   );
   const data = await response.json();
   if (data.noData) {
@@ -83,22 +91,41 @@ export async function GetData(index: number, dbIndex: number) {
 export async function FetchLLMData(
   db: string,
   predicate: string,
-  group1: string,
   group1data: string,
-  group1value: string,
-  group1datavalue: string,
-  group2: string,
+  g1Amount: string,
   group2data: string,
-  group2value: string,
-  group2datavalue: string,
+  g2Amount: string,
   functiont: string,
-  g1LeftName: string,
-  g2LeftName: string,
+  g1Name: string,
+  g2Name: string,
   modelName: string
 ) {
-  const response = await fetch(
-    `http://localhost:3005/project/LLM/?databaseName=${db}&predicate=${predicate}&g1=${group1}&g1Data=${group1data}&g1Value=${group1value}&g1ValueData=${group1datavalue}&g2=${group2}&g2Data=${group2data}&g2Value=${group2value}&g2ValueData=${group2datavalue}&function=${functiont} &g1LeftName=${g1LeftName}&g2LeftName=${g2LeftName}&modelName=${modelName}`
-  );
+  const senddata = {
+    compareValue: compareTitle[db],
+    databaseName: db,
+    predicate: predicate,
+
+    g1Name: g1Name,
+    g2Name: g2Name,
+
+    g1CompareValue: group1data,
+    g2CompareValue: group2data,
+
+    g1Amount: g1Amount,
+    g2Amount: g2Amount,
+
+    function: functiont,
+    modelName: modelName,
+  };
+  console.log(senddata);
+
+  const response = await fetch("http://localhost:3005/claimendorsement/LLM/", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(senddata),
+  });
   const data = await response.json();
 
   return data;

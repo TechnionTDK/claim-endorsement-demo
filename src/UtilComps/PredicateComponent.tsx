@@ -23,6 +23,7 @@ const PredicateComponent: React.FC<PredicateComponentProps> = ({
     return (
       <div
         style={{
+          fontSize: "22px",
           display: "grid",
           gridTemplateColumns: "1fr 1fr",
           gridTemplateRows: "auto auto",
@@ -57,6 +58,7 @@ const PredicateComponent: React.FC<PredicateComponentProps> = ({
         display: "grid",
         gridTemplateColumns: "1fr 1fr",
         gridTemplateRows: "auto auto",
+        fontSize: "22px",
       }}
     >
       <div

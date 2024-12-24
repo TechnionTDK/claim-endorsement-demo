@@ -2,7 +2,7 @@ import json
 import pandas as pd
 import sys
 import os
-filepaths=['SO','flights','Folkstable/SevenStates']
+
 def create_data_file_from_csv(index,pathIndex):
     custom_headers = ['Attr1', 'Value1', 'Attr2', 'Value2', 'mean1', 'N1', 'mean2',
                       'N2', 'statistical_significance_stat', 'pvalue', 'Time', 'MI', 
@@ -11,7 +11,7 @@ def create_data_file_from_csv(index,pathIndex):
                       'Attr2_str', 'Value2_str', 'Cosine Similarity', 
                       'Inverted pvalue', 'Coverage','AggDiff', 'Metrics Average']
 
-    file_path = f'data/{filepaths[pathIndex]}/results/demo_test.csv'
+    file_path = f'data/{pathIndex}/results/demo_test.csv'
     if not os.path.exists(file_path):
         return "-1"
     if os.path.getsize(file_path) == 0:
@@ -89,7 +89,7 @@ def create_data_file_from_csv_for_test():
         json_file.write(json_output)
 if __name__ == '__main__':
    index = int(sys.argv[1])
-   pathIndex = int(sys.argv[2])
+   pathIndex = str(sys.argv[2])
 #create_data_file_from_csv_for_test()
    value= create_data_file_from_csv(index,pathIndex)
    print(value)

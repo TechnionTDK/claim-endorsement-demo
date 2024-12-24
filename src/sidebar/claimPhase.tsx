@@ -11,7 +11,7 @@ import PopupComponent from "../UtilComps/popupComponent";
 import { MyContext } from "../App";
 import { compareTitle } from "../utils/dataDump";
 import Select from "react-select";
-const Phase2: React.FC<Phase2Props> = ({}) => {
+const ClaimPhase: React.FC<Phase2Props> = ({}) => {
   const [display, setDisplay] = useState("");
   const context = useContext(MyContext);
   const {
@@ -43,6 +43,17 @@ const Phase2: React.FC<Phase2Props> = ({}) => {
       height: "1.8vw",
       fontSize: "0.6vw",
       textAlign: "left",
+    }),
+
+    singleValue: (provided: any) => ({
+      ...provided,
+      fontSize: "0.8vw", // Change this to your desired font size
+    }),
+    option: (provided: any) => ({
+      ...provided,
+      fontSize: "0.8vw", // Change this to your desired font size
+      wordBreak: "break-word", // Break words to fit within the container
+      hyphens: "auto", // Add hyphens where appropriate
     }),
   };
   return (
@@ -97,7 +108,7 @@ const Phase2: React.FC<Phase2Props> = ({}) => {
           >
             <Form.Select
               disabled={!isChangeable}
-              style={{ height: "1.8vw", fontSize: "0.6vw", width: "5vw" }}
+              style={{ height: "2vw", fontSize: "0.8vw", width: "5vw" }}
               id="aggregateFunction"
               value={aggregateFunctions[aggregateFunction]}
               onChange={(e) =>
@@ -123,7 +134,7 @@ const Phase2: React.FC<Phase2Props> = ({}) => {
           >
             <Form.Select
               disabled={!isChangeable}
-              style={{ height: "1.8vw", fontSize: "0.6vw", width: "8vw" }}
+              style={{ height: "2vw", fontSize: "0.8vw", width: "8vw" }}
               id="groupattr"
               value={compareTitle[selectedDatabase]}
               onChange={(e) => {}}
@@ -235,4 +246,4 @@ const Phase2: React.FC<Phase2Props> = ({}) => {
   );
 };
 
-export default Phase2;
+export default ClaimPhase;

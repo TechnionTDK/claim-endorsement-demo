@@ -3,41 +3,54 @@ import { spawn, ChildProcess, exec } from "child_process";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
-import { log } from "console";
+
 import dotenv from "dotenv";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import psTree from "ps-tree";
 let isCurrentlyRunning = false;
-
+let filepaths = ["SO", "flights", "Folkstable/SevenStates"];
 const dotenv_path =
   "D:\\Git\\claim-endorsement-demo\\server\\src\\database_connection_dummy.env";
 dotenv.config({ path: dotenv_path });
 const apiKey = process.env.GEMINI_KEY;
 const genAI = new GoogleGenerativeAI(apiKey);
-const isProcessRunning = (pid: number): Promise<boolean> => {
-  return new Promise((resolve, reject) => {
-    psTree(pid, (err, children) => {
-      if (err) {
-        return reject(err);
-      }
-      resolve(children.length > 0);
-    });
-  });
-};
-
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+var router = express.Router();
+let pythonProcess: ChildProcess | null = null;
 // Example usage to check if the process is still running
 const checkIfProcessIsRunning = async () => {
+  const isProcessRunning = (pid: number): Promise<boolean> => {
+    return new Promise((resolve, reject) => {
+      psTree(pid, (err, children) => {
+        if (err) {
+          return reject(err);
+        }
+        resolve(children.length > 0);
+      });
+    });
+  };
+
   if (pythonProcess && pythonProcess.pid) {
     const running = await isProcessRunning(pythonProcess.pid);
     return running ? true : false;
-    console.log(`Process is ${running ? "still running" : "not running"}`);
   } else {
     return false;
-    console.log("No process to check.");
   }
 };
+const stopPythonProcess = () => {
+  try {
+    const pid = pythonProcess.pid;
+    if (pid === null) return;
+    exec(`taskkill /PID ${pid} /T /F`, (error, stdout, stderr) => {
+      if (error) {
+        return;
+      }
+    });
+  } catch (error) {}
+};
 
-async function run(prompt2: any, modelName: string) {
+async function callAI(prompt: any, modelName: string) {
   const model = genAI.getGenerativeModel({
     model: modelName,
     systemInstruction: `You are a helpful assistant that is tasked with translating queries and results into a natural sounding sentence
@@ -413,7 +426,7 @@ the parameters given to you are a database name, predicate 2-4 data parameters a
 ]`,
   });
   try {
-    const result = await model.generateContent(prompt2);
+    const result = await model.generateContent(prompt);
     console.log(result.response.text());
     return result.response.text();
   } catch (e) {
@@ -422,33 +435,20 @@ the parameters given to you are a database name, predicate 2-4 data parameters a
     return "error";
   }
 }
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-var router = express.Router();
-let pythonProcess: ChildProcess | null = null;
-const emptyFilePython = async (pathname) => {
-  let pythonProcess2: ChildProcess | null = spawn("conda", [
-    "run",
-    "-n",
-    "condaenv",
-    "python",
-    "src/1-emptyFile.py",
-    "--pathname",
-    pathname,
-  ]);
-  pythonProcess2.stdout.on("data", (data) => {
-    console.log(`stdout: ${data}`);
+const deleteFile = async (pathname) => {
+  const filePath = path.join("data", pathname, "results", "demo_test.csv");
+  console.log(filePath);
+  if (!fs.existsSync(filePath)) {
+    return;
+  }
+  fs.unlink(filePath, (err) => {
+    if (err) {
+      console.error(`Error deleting file: ${err}`);
+      return;
+    }
+    console.log("File deleted successfully");
   });
-  // Listen to the stderr stream
-  pythonProcess2.stderr.on("data", (data) => {
-    console.error(`stderr: ${data}`);
-  });
-
-  // Handle process exit
-  pythonProcess2.on("close", (code) => {
-    console.log(`child process exited with code ${code}`);
-  });
+  return;
 };
 const callPythonMain = async (dbname, aggtype, grpattr, g1, g2) => {
   return new Promise((resolve, reject) => {
@@ -512,24 +512,6 @@ const callPythonMain = async (dbname, aggtype, grpattr, g1, g2) => {
     });
   });
 };
-const stopPythonProcess = () => {
-  //  console.log("Python process stopping.");
-
-  try {
-    const pid = pythonProcess.pid;
-    if (pid === null) return;
-    exec(`taskkill /PID ${pid} /T /F`, (error, stdout, stderr) => {
-      if (error) {
-        //   log("could not find python process to stop");
-        return;
-      }
-      //  console.log("Python process terminated successfully.");
-    });
-    // console.log("Python process stopped.");
-  } catch (error) {
-    log("could not find python process to stop");
-  }
-};
 const calcValue = (dataItem) => {
   const cosSim = Math.max(dataItem["Cosine Similarity"], 0);
   const invP = Math.max(dataItem["Inverted pvalue"], 0);
@@ -543,18 +525,62 @@ const getMax = (data) => {
   tempData.sort((a, b) => calcValue(b) - calcValue(a));
   return tempData;
 };
+function emptyFileOriginalQuery() {
+  const filePath = path.join(
+    __dirname,
+    "../../../src/assets/demo_test_ORIGINAL.json"
+  );
+  fs.writeFile(filePath, JSON.stringify({}), (err) => {
+    if (err) {
+      console.error("Error emptying the file:", err);
+    }
+    console.log("File emptied successfully");
+  });
+}
+router.get("/", async (req, res) => {
+  try {
+    console.log("2---------------------------------------------------");
+    emptyFileOriginalQuery();
+    console.log("3---------------------------------------------------");
+    const dbname = req.query.dbname;
+    console.log(dbname);
+    const aggtype = (req.query.aggtype as string).toLowerCase();
+    console.log(aggtype);
+
+    const grpattr = req.query.grpattr;
+    console.log(grpattr);
+    const g1 = req.query.g1;
+    console.log(g1);
+    const g2 = req.query.g2;
+    console.log(g2);
+
+    console.log("Starting Python process...");
+    callPythonMain(dbname, aggtype, grpattr, g1, g2)
+      .then((output) => {
+        console.log(output);
+      })
+      .catch((error) => {
+        console.error("Error calling Python main:", error);
+      });
+
+    res.status(200).send();
+  } catch (error) {
+    const status = error.status || 500;
+    res.status(status).send(error);
+  }
+});
 router.get("/send-data", async (req, res) => {
   const index = req.query.prev ? parseInt(req.query.prev as string) : 0;
   const options = {
     maxBuffer: 1000 * 1024 * 1024, // Increase maxBuffer to 10 MB
   };
   const running = await checkIfProcessIsRunning();
-  const dbIndex = req.query.dbIndex;
+  const dbName = req.query.dbName;
   console.log("look at me look at me ");
   console.log(req.query);
 
   exec(
-    `py src/1-CreateData.py ${index} ${dbIndex}`,
+    `py src/1-CreateData.py ${index} ${dbName}`,
     options,
     (error, stdout, stderr) => {
       if (error) {
@@ -569,7 +595,7 @@ router.get("/send-data", async (req, res) => {
           .replace(/\bN E W\b/g, "New");
 
         if (stdout.trim() == "-1") {
-          log("in here");
+          console.log("in here");
           if (running) {
             console.log("is currently running");
 
@@ -610,7 +636,7 @@ router.get("/send-data", async (req, res) => {
         }, {} as Record<string, (typeof data)[0][]>);
 
         const separatedArrays = Object.values(groupedData);
-        log(separatedArrays.length);
+        console.log(separatedArrays.length);
         const sortedArrays2 = separatedArrays
           .map((item) => getMax(item))
           .map((item) => {
@@ -622,6 +648,7 @@ router.get("/send-data", async (req, res) => {
           .send({ data: data, isEmpty: false, grouped: sortedArrays2 });
       } catch (error) {
         console.log(error);
+        res.status(500).send({ error: "An error has occurred" });
       }
     }
   );
@@ -629,56 +656,33 @@ router.get("/send-data", async (req, res) => {
   return;
 });
 
-router.get("/empty-file", async (req, res) => {
-  try {
-    let pathname = req.query.pathname;
-    console.log("Starting Deletion");
+router.post("/LLM", async (req, res) => {
+  const modelName = req.body.modelName as string;
+  const compare = req.body.compareValue;
+  const databaseName = req.body.databaseName;
+  const predicate = req.body.predicate;
 
-    emptyFilePython(pathname)
-      .then((output) => {
-        console.log(output);
-      })
-      .catch((error) => {
-        console.error("Error calling Python main:", error);
-      });
+  const g1Name = req.body.g1Name;
+  const g1CompareValue = req.body.g1CompareValue;
+  const g1Amount = req.body.g1Amount;
 
-    res.status(200).send();
-  } catch (error) {
-    const status = error.status || 500;
-    res.status(status).send(error);
-  }
-});
-router.get("/LLM", async (req, res) => {
-  const databaseName = req.query.databaseName;
-  const predicate = req.query.predicate;
-  const g1 = req.query.g1;
-  const g1Data = req.query.g1Data;
-  const g1Value = req.query.g1Value as string;
-  const g1ValueData = req.query.g1ValueData;
-  const func = req.query.function;
-  const g1LeftName = req.query.g1LeftName;
-  const g2LeftName = req.query.g2LeftName;
-  const modelName = req.query.modelName as string;
-  console.log(databaseName);
+  const g2Name = req.body.g2Name;
+  const g2CompareValue = req.body.g2CompareValue;
+  const g2Amount = req.body.g2Amount;
 
-  const g2 = req.query.g2;
-  const g2Data = req.query.g2Data;
-  const g2Value = req.query.g2Value as string;
-  const g2ValueData = req.query.g2ValueData;
-  //console.log(g1Data);
-  console.log(g2Data);
-  //console.log(g2Data);
-  console.log(g2Value);
+  const g1Value = `"${g1Name} count":${g1Amount}`;
+  const g2Value = `"${g2Name} count":${g2Amount}`;
+
+  const func = req.body.function;
+  const g1 = `"${g1Name} ${func} ${compare}":${g1CompareValue}`;
+  const g2 = `"${g2Name} ${func} ${compare}":${g2CompareValue}`;
   let sentence;
   switch (databaseName) {
     case "Flights":
       let splitted1 = g1Value.split("-")[1].split(" ")[0];
       let splitted2 = g2Value.split("-")[1].split(" ")[0];
-      if (Number(g1Data) > Number(g2Data)) {
-        sentence = `Among flights ${predicate}, there are more flight delays on ${splitted1} (${g1ValueData}) vs. ${splitted2} (${g2ValueData}).`;
-      } else {
-        sentence = `Among flights ${predicate}, there are more flight delays on ${splitted2} (${g2ValueData}) vs. ${splitted1} (${g1ValueData}).`;
-      }
+
+      sentence = `Among flights ${predicate}, there are more flight delays on ${splitted2} (${g2Amount}) vs. ${splitted1} (${g1Amount}).`;
 
       /* console.log(
         `${databaseName}\n"predicate":${predicate} \n${splitted1}\n${splitted2} \n"original sentence": ${sentence}`
@@ -686,22 +690,18 @@ router.get("/LLM", async (req, res) => {
       break;
     case "Stack Overflow":
       sentence = `Among the ${
-        Number(g1ValueData) + Number(g2ValueData)
+        Number(g1Amount) + Number(g2Amount)
       } people (out of 38K) who ${predicate}, `;
       switch (func) {
         case "avg":
-          if (Number(g1Data) > Number(g2Data)) {
-            sentence += `${g1LeftName} earn a higher salary on average ($${g1Data}) than ${g2LeftName}($${g2Data}).`;
-          } else {
-            sentence += ` ${g2LeftName} earn a higher salary on average ($${g2Data}) than ${g1LeftName}($${g1Data}).`;
-          }
+          sentence += ` ${g2Name} earn a higher salary on average ($${g2CompareValue}) than ${g1Name}($${g1CompareValue}).`;
 
           break;
         case "median":
-          sentence += ` ${g2LeftName} earn a higher median salary ($${g2Data}) than ${g1LeftName}($${g1Data}).`;
+          sentence += ` ${g2Name} earn a higher median salary ($${g2CompareValue}) than ${g1Name}($${g1CompareValue}).`;
           break;
         case "count":
-          sentence += `There are more of group ${g2LeftName} than of group ${g1LeftName} .`;
+          sentence += `There are more of group ${g2Name} than of group ${g1Name} .`;
           break;
 
         default:
@@ -714,7 +714,8 @@ router.get("/LLM", async (req, res) => {
       break;
     case "ACS":
       break;
-    case "FLIGHTS":
+
+    default:
       break;
   }
   console.log("???????????????????????????????????????????");
@@ -724,69 +725,26 @@ router.get("/LLM", async (req, res) => {
   );
   console.log("???????????????????????????????????????????");
 
-  const result = await run(
+  const result = await callAI(
     `${databaseName}\n"predicate":${predicate} \n${g1} \n${g1Value} \n${g2} \n${g2Value} \n"original sentence": ${sentence}`,
     modelName
   );
   if (result === "error") {
-    res.status(500).send({ result: "an error has occured, try again" });
+    res.status(500).send({ result: "an error has occurred, try again" });
     return;
   }
   res.status(200).send({ result });
 });
-function emptyFile() {
-  const filePath = path.join(
-    __dirname,
-    "../../../src/assets/demo_test_ORIGINAL.json"
-  );
-  fs.writeFile(filePath, JSON.stringify({}), (err) => {
-    if (err) {
-      console.error("Error emptying the file:", err);
-    }
-    console.log("File emptied successfully");
-  });
-}
-router.get("/", async (req, res) => {
-  try {
-    console.log("2---------------------------------------------------");
-    emptyFile();
-    console.log("3---------------------------------------------------");
-    const dbname = req.query.dbname;
-    console.log(dbname);
-    const aggtype = (req.query.aggtype as string).toLowerCase();
-    console.log(aggtype);
 
-    const grpattr = req.query.grpattr;
-    console.log(grpattr);
-    const g1 = req.query.g1;
-    console.log(g1);
-    const g2 = req.query.g2;
-    console.log(g2);
-
-    console.log("Starting Python process...");
-    callPythonMain(dbname, aggtype, grpattr, g1, g2)
-      .then((output) => {
-        console.log(output);
-      })
-      .catch((error) => {
-        console.error("Error calling Python main:", error);
-      });
-
-    res.status(200).send();
-  } catch (error) {
-    const status = error.status || 500;
-    res.status(status).send(error);
-  }
-});
 router.delete("/", async (req, res) => {
   try {
-    let pathname = parseInt(req.query.pathname as string, 10);
+    let pathname = req.query.pathname;
     stopPythonProcess();
     console.log("starting delete");
 
     console.log(pathname);
 
-    emptyFilePython(filepaths[pathname])
+    deleteFile(pathname)
       .then((output) => {
         console.log("this is the output:");
 
@@ -805,4 +763,3 @@ router.delete("/", async (req, res) => {
 });
 
 export default router;
-let filepaths = ["SO", "flights", "Folkstable/SevenStates"];

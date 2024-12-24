@@ -1,11 +1,11 @@
 import React, { useContext } from "react";
 import { Form } from "react-bootstrap";
-import { Phase1Props } from "../utils/interfaces";
-import PopupComponent from "../UtilComps/popupComponent";
+import { Phase1Props } from "../utils/interfaces.ts";
+import PopupComponent from "../UtilComps/popupComponent.tsx";
 const dataBaseOptions = ["Stack Overflow", "US Census", "Flights"];
 import { popupTexts } from "../utils/dataDump.ts";
-import { MyContext } from "../App";
-const Phase1: React.FC<Phase1Props> = () => {
+import { MyContext } from "../App.tsx";
+const DatabasePhase: React.FC<Phase1Props> = () => {
   const context = useContext(MyContext);
 
   const { setSelectedDatabase, selectedDatabase, isChangeable } = context!;
@@ -53,4 +53,4 @@ const Phase1: React.FC<Phase1Props> = () => {
   );
 };
 
-export default Phase1;
+export default DatabasePhase;

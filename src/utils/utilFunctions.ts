@@ -1,4 +1,3 @@
-import { parse } from "@fortawesome/fontawesome-svg-core";
 import { FetchLLMData } from "../BL/FetchFunctions";
 import {
   aggregateFunctions,
@@ -152,13 +151,11 @@ export async function GetLLMText(
   const data = await FetchLLMData(
     db,
     predicate,
-    g1,
+
     g1Data,
-    g1Value,
     g1ValueData,
-    g2,
+
     g2Data,
-    g2Value,
     g2ValueData,
     functiont,
     g1LeftName,

@@ -3,10 +3,9 @@ import * as React from "react";
 
 import { MyContext } from "../App";
 import { Sidebar, Menu } from "react-pro-sidebar";
-
-import Phase1 from "./phase1";
-import Phase2 from "./phase2";
-import Phase3 from "./phase3";
+import DatabasePhase from "./databasePhase";
+import ClaimPhase from "./claimPhase";
+import WeightsPhase from "./weightsPhase";
 
 const MySideBar: React.FC = () => {
   const selectInitial = (e: any) => {
@@ -23,14 +22,14 @@ const MySideBar: React.FC = () => {
         <div id="SideBar-top_divider"></div>
 
         <Menu id="SideBar-Menu">
-          <Phase1
+          <DatabasePhase
             selectedDatabase={selectedDatabase}
             selectInitial={selectInitial}
           />
 
-          <Phase2 />
+          <ClaimPhase />
 
-          <Phase3 clearData={clearData} />
+          <WeightsPhase clearData={clearData} />
         </Menu>
       </Sidebar>
     </div>

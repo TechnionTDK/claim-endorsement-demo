@@ -7,7 +7,7 @@ import PopupComponent from "../UtilComps/popupComponent";
 import ClipLoader from "react-spinners/ClipLoader";
 import { popupTexts } from "../utils/dataDump";
 
-const Phase3: React.FC<Phase3Props> = ({ clearData }) => {
+const WeightsPhase: React.FC<Phase3Props> = ({ clearData }) => {
   const context = useContext(MyContext);
   const {
     loading,
@@ -83,4 +83,4 @@ const Phase3: React.FC<Phase3Props> = ({ clearData }) => {
   );
 };
 
-export default Phase3;
+export default WeightsPhase;

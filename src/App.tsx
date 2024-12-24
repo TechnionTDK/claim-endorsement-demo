@@ -1,17 +1,14 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import * as React from "react";
 import { createData } from "./utils/createChart";
 import "./css/App.css";
 import MySideBar from "./sidebar/MySideBar";
-import About from "./TableDispaly/about";
-import HoverData from "./TableDispaly/hoverData";
 
 import DataDisplay from "./TableDispaly/dataDisplay";
 import InfiniteScroll from "react-infinite-scroll-component";
 
 import {
   checksortFunction,
-  getTextValues,
   TranslateForURL,
   TranslatePath,
 } from "./utils/utilFunctions";
@@ -48,12 +45,11 @@ ChartJS.register(
 );
 
 import { translateDB } from "./utils/dataDump";
-import HeaderDisplay from "./TableDispaly/headerDisplay";
 import { useUpdateRef } from "./utils/MyRefHook";
 import { addChart } from "./utils/addChart";
 import { message } from "./UtilComps/message";
-import { Button } from "react-bootstrap";
 import DataDisplayOriginalQuery from "./TableDispaly/dataDisplayOriginalQuery";
+import TableDisplayHeader from "./TableDispaly/tableDisplayHeader";
 
 export const MyContext = React.createContext<ContextType | null>(null);
 
@@ -375,20 +371,13 @@ function App() {
         <MySideBar></MySideBar>
 
         <div style={{ width: "80vw" }}>
-          {hoveredData === null ? null : (
-            <HoverData data={hoveredData} predicate={predicateText} />
-          )}
-          <About />
-
-          <HeaderDisplay
+          <TableDisplayHeader
+            hoveredData={hoveredData}
+            predicateText={predicateText}
             sortingOptions={sortingOptions}
             setSortingOptions={setSortingOptions}
-          ></HeaderDisplay>
+          ></TableDisplayHeader>
 
-          <div
-            style={{ marginTop: "25px", width: "80vw" }}
-            className="seperation-Line"
-          ></div>
           <div>
             {originalQueryData[0] == 0 &&
             originalQueryData[1] == 0 &&

@@ -33,13 +33,13 @@
 }
 .explanation-info-popup {
   padding: 10px;
-  height: 120px;
+  height: 150px;
   background-color: rgba(86, 86, 86, 0.8);
   color: white;
   text-align: center;
   align-content: center;
   position: absolute;
-  top: -62.5px;
+  top: -90px;
   right: -516.5px;
 
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);

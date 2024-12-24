@@ -13,24 +13,23 @@ const Explanation: React.FC<ExplainaitionProps> = ({ dataValues }) => {
   const [showExplaination, setShowExplanation] = React.useState(true);
   const {
     selectedGroupBy,
-    groupDataBool,
     loadingStates,
     setLoadingStates,
     selectedDatabase,
     selectedCompare1,
     selectedCompare2,
     aggregateFunction,
-    unfoldData,
     SetExplanation,
-    maxDiff,
   } = context!;
   const GetLLM = async () => {
     const sleep = (ms: number) =>
       new Promise((resolve) => setTimeout(resolve, ms));
     try {
-      var LLMText = { result: "an error has occured, try again" };
+      var LLMText = { result: "an error has occurred, try again" };
       var modelName = "flash";
-      while (LLMText.result == "an error has occured, try again") {
+      var errorOccurred = true;
+      while (errorOccurred) {
+        errorOccurred = false;
         LLMText = await GetLLMText(
           dataValues,
           selectedDatabase,
@@ -40,8 +39,9 @@ const Explanation: React.FC<ExplainaitionProps> = ({ dataValues }) => {
           aggregateFunction,
           `gemini-1.5-${modelName}`
         );
-        if (LLMText.result == "an error has occured, try again") {
+        if (LLMText.result == "an error has occurred, try again") {
           modelName = "flash-8b";
+          errorOccurred = true;
           await sleep(1000);
         }
       }
@@ -92,7 +92,11 @@ const Explanation: React.FC<ExplainaitionProps> = ({ dataValues }) => {
           variant="outline-secondary"
           id="custom-outline-secondary"
           size="sm"
-          style={{ marginTop: "10px", width: "5rem", fontSize: "14px" }}
+          style={{
+            marginTop: "10px",
+            width: "5rem",
+            fontSize: "14px",
+          }}
           onClick={(event) => {
             event.stopPropagation();
             setShowExplanation(!showExplaination);
@@ -102,7 +106,7 @@ const Explanation: React.FC<ExplainaitionProps> = ({ dataValues }) => {
           {showExplaination ? `X` : `Show`}
         </Button>
         {showExplaination ? (
-          <div className="explanation-info-popup">
+          <div className="explanation-info-popup" style={{}}>
             <div
               style={{
                 textShadow: `
@@ -110,6 +114,7 @@ const Explanation: React.FC<ExplainaitionProps> = ({ dataValues }) => {
               1px -1px 0 #000,
               -1px 1px 0 #000,
               1px 1px 0 #000`,
+                fontSize: "20px",
               }}
             >
               {dataValues.explanation.explanation}
