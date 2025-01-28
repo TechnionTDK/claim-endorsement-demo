@@ -1,4 +1,4 @@
-# Cherry Picking Frontend
+# Claim Endorsement Frontend
 
 how to run:
 

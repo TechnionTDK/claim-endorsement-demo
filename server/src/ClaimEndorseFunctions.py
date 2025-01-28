@@ -148,6 +148,8 @@ class Bucket(object):
     def value_to_bucket_id(self, value):
         if value is None or math.isnan(value):
             return value
+        if value > self.high or value < self.low:
+            return None
         bucket_width = (self.high - self.low) / self.count
         return math.ceil(value / bucket_width)
 
@@ -161,11 +163,14 @@ class Bucket(object):
         return s
 
     @classmethod
-    def from_attr_name(cls, attr_name, db_name):
-        engine = SQLEngineSingleton(db_name)
-        query = sqlalchemy.text(f"""SELECT MIN("{attr_name}"), MAX("{attr_name}") 
-                                    FROM my_table;""")
-        min_val, max_val = list(engine.execute(query))[0]
+    def from_attr_name(cls, attr_name, db_name=None, df=None):
+        if df is not None:
+            min_val, max_val = df[attr_name].min(), df[attr_name].max()
+        elif db_name is not None:
+            engine = SQLEngineSingleton(db_name)
+            query = sqlalchemy.text(f"""SELECT MIN("{attr_name}"), MAX("{attr_name}") 
+                                        FROM my_table;""")
+            min_val, max_val = list(engine.execute(query))[0]
         interval_size = value_range_to_interval_size(max_val - min_val)
         # round max (up) and min (down) to the closest <interval_size>
         rounded_max = int(math.ceil(max_val / interval_size) * interval_size)
@@ -1192,25 +1197,25 @@ def create_count_std_dictionary(atom_combinations, bucket_dict, start_time, db_n
         std_dict[comb] = runner.run_query(query_args, bucket_dict)
     return std_dict
 
-
-def calc_anova_for_attrs(df, attr_iterable, target_attr, bucket_dict):
-    # if is_multivalue_attr(df,attr):
-    #     new_df, new_columns = get_dummies_multi_hot(df, attr)
-    group_by = []
-    for attr in attr_iterable:
-        if attr in bucket_dict:
-            bucket = bucket_dict[attr]
-            df[f'{attr}_bucket'] = df[attr].apply(lambda v: bucket.value_to_bucket_id(v))
-            group_by.append(f'{attr}_bucket')
-        else:
-            group_by.append(attr)
-    smp_attr_grouped = df[~df[target_attr].isna()].groupby(group_by)[target_attr].apply(list).values.tolist()
-    # Can't calculate anova with less than 2 groups.
-    if len(smp_attr_grouped) <= 1:
-        f_stat, anova_pvalue = 0, 1
-    else:
-        f_stat, anova_pvalue = sp.stats.f_oneway(*smp_attr_grouped)
-    return f_stat, anova_pvalue
+#
+# def calc_anova_for_attrs(df, attr_iterable, target_attr, bucket_dict):
+#     # if is_multivalue_attr(df,attr):
+#     #     new_df, new_columns = get_dummies_multi_hot(df, attr)
+#     group_by = []
+#     for attr in attr_iterable:
+#         if attr in bucket_dict:
+#             bucket = bucket_dict[attr]
+#             df[f'{attr}_bucket'] = df[attr].apply(lambda v: bucket.value_to_bucket_id(v))
+#             group_by.append(f'{attr}_bucket')
+#         else:
+#             group_by.append(attr)
+#     smp_attr_grouped = df[~df[target_attr].isna()].groupby(group_by)[target_attr].apply(list).values.tolist()
+#     # Can't calculate anova with less than 2 groups.
+#     if len(smp_attr_grouped) <= 1:
+#         f_stat, anova_pvalue = 0, 1
+#     else:
+#         f_stat, anova_pvalue = sp.stats.f_oneway(*smp_attr_grouped)
+#     return f_stat, anova_pvalue
 
 
 

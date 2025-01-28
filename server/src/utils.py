@@ -221,6 +221,11 @@ def make_translation_for_flights(fields_list):
     return trans_dict
 
 
+def make_translation_for_hm(fields_list):
+    trans_dict = {c: c.replace("_", " ").lower() for c in fields_list}
+    return trans_dict
+
+
 def prepare_for_regression(df, data_path, attrs):
     if "Folkstable" not in data_path:
         return df
@@ -442,3 +447,23 @@ def get_outliers(df, attr, iqr_factor=1.5):
     print(
         f"Found {len(df1)} outlier rows, {round(len(df1) / len(df) * 100, 2)}% of the dataset")
     return df1.index
+
+
+def calc_anova_for_attrs(df, attr_iterable, target_attr, bucket_dict):
+    # if is_multivalue_attr(df,attr):
+    #     new_df, new_columns = get_dummies_multi_hot(df, attr)
+    group_by = []
+    for attr in attr_iterable:
+        if attr in bucket_dict:
+            bucket = bucket_dict[attr]
+            df[f'{attr}_bucket'] = df[attr].apply(lambda v: bucket.value_to_bucket_id(v))
+            group_by.append(f'{attr}_bucket')
+        else:
+            group_by.append(attr)
+    smp_attr_grouped = df[~df[target_attr].isna()].groupby(group_by)[target_attr].apply(list).values.tolist()
+    # Can't calculate anova with less than 2 groups.
+    if len(smp_attr_grouped) <= 1:
+        f_stat, anova_pvalue = 0, 1
+    else:
+        f_stat, anova_pvalue = sp.stats.f_oneway(*smp_attr_grouped)
+    return f_stat, anova_pvalue

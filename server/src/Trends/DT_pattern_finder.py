@@ -1,15 +1,19 @@
 from sklearn import tree
 from sklearn.tree import plot_tree
 import pandas as pd
+import matplotlib.pyplot as plt
 
 
 class DecisionTreePatternFinder(object):
-    def __init__(self, df, conf):
+    def __init__(self, df, conf, max_depth=3):
         # The subset of the dataframe columns that should be one-hot encoded should be a list (conf["string_cols"]).
         # The subset of the dataframe to consider in the tree training should be a list conf["include"].
         # row ids to remove should be a list: conf["ids_to_remove"].
         self.df = df.copy()
         self.conf = conf
+        self.max_depth = max_depth
+        self.tree = None
+        self.cols = None
 
     def find_prominent_attributes(self):
         self.df['remove'] = 0
@@ -19,18 +23,22 @@ class DecisionTreePatternFinder(object):
         df_nona = df_nona[self.conf["include"] + ["remove"]]
 
         string_cols = [x for x in self.conf["string_cols"] if x in self.conf['include']]
-        df_encoded = pd.get_dummies(df_nona, columns=string_cols)
+        df_encoded = pd.get_dummies(df_nona, columns=string_cols, prefix_sep="$")
 
         X = df_encoded[[col for col in df_encoded.columns if col != "remove"]]
+        self.cols = X.columns
         Y = df_encoded["remove"]
-        clf = tree.DecisionTreeClassifier(max_depth=3)
+        clf = tree.DecisionTreeClassifier(max_depth=self.max_depth)
         clf = clf.fit(X, Y)
+        self.tree = clf  # for inspection
+        # plt.figure()
         # plot_tree(clf)
+        # plt.savefig(self.conf['output_path'].split('.')[0]+'_tree.pdf', format='pdf', bbox_inches="tight")
         features_used = [X.columns[feat] for feat in clf.tree_.feature if feat >= 0]
         orig_feats = []
         for attr in features_used:
             if attr not in self.conf["include"]:
-                orig_feats.append(attr.split("_")[0])
+                orig_feats.append(attr.split("$")[0])
             else:
                 orig_feats.append(attr)
         return orig_feats

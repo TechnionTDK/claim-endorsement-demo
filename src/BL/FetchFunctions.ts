@@ -1,6 +1,6 @@
 import { compareTitle } from "../utils/dataDump";
 
-let filepaths = ["SO", "flights", "Folkstable/SevenStates"];
+let filepaths = ["SO", "flights", "Folkstable/SevenStates", "hm"];
 export async function retrieveOriginalQuery() {
   const sleep = (ms: number) =>
     new Promise((resolve) => setTimeout(resolve, ms));
@@ -57,11 +57,19 @@ export async function StartCalculationWrapper(
       agg = "avg";
     }
     console.log(
-      `http://localhost:3005/claimendorsement/?dbname=${db}&aggtype=${agg}&grpattr=${grp}&g1=${g1}&g2=${g2}`
+      `http://localhost:3005/claimendorsement/?dbname=${encodeURIComponent(
+        db
+      )}&aggtype=${encodeURIComponent(agg)}&grpattr=${encodeURIComponent(
+        grp
+      )}&g1=${encodeURIComponent(g1)}&g2=${encodeURIComponent(g2)}`
     );
 
     await fetch(
-      `http://localhost:3005/claimendorsement/?dbname=${db}&aggtype=${agg}&grpattr=${grp}&g1=${g1}&g2=${g2}`
+      `http://localhost:3005/claimendorsement/?dbname=${encodeURIComponent(
+        db
+      )}&aggtype=${encodeURIComponent(agg)}&grpattr=${encodeURIComponent(
+        grp
+      )}&g1=${encodeURIComponent(g1)}&g2=${encodeURIComponent(g2)}`
     );
   } catch (error) {
     alert("Error in fetching data");

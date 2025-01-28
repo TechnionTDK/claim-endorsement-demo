@@ -48,7 +48,7 @@ const PopupComponent: React.FC<PopupComponentProps> = ({
       </div>
       {showInfo && (
         <div id={idName} className={`info-popup-${className} info-popup`}>
-          <p>{text}</p>
+          {text}
         </div>
       )}
     </div>

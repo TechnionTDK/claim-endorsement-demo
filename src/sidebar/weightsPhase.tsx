@@ -44,7 +44,7 @@ const WeightsPhase: React.FC<Phase3Props> = ({ clearData }) => {
               await startCalculation();
             }}
           >
-            {loading && (
+            {!isChangeable && (
               <ClipLoader
                 size={20}
                 loading={true}
@@ -52,7 +52,7 @@ const WeightsPhase: React.FC<Phase3Props> = ({ clearData }) => {
                 color="white"
               ></ClipLoader>
             )}
-            {!loading && "Start Fetching"}
+            {isChangeable && "Start Fetching"}
           </Button>
 
           <Button

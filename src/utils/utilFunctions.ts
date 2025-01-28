@@ -5,7 +5,7 @@ import {
   compareValues,
   groupByOptions,
   translationDict,
-  ACS7dict,
+  valuesDict,
 } from "./dataDump";
 import { Data, DataType } from "./interfaces";
 
@@ -53,11 +53,11 @@ export function TranslateForURL(
   if (db == "ACS7" || db == "FLIGHTS") {
     console.log(db);
     console.log(g2);
-    console.log(ACS7dict[groupbyTextValue][g1]);
-    console.log(ACS7dict[groupbyTextValue]);
-    console.log(ACS7dict[groupbyTextValue][g2]);
-    g1 = ACS7dict[groupbyTextValue][g1];
-    g2 = ACS7dict[groupbyTextValue][g2];
+    console.log(valuesDict[groupbyTextValue][g1]);
+    console.log(valuesDict[groupbyTextValue]);
+    console.log(valuesDict[groupbyTextValue][g2]);
+    g1 = valuesDict[groupbyTextValue][g1];
+    g2 = valuesDict[groupbyTextValue][g2];
   }
   return { db, agg, grp, g1, g2, argtype };
 }

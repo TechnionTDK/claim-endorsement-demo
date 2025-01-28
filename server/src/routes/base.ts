@@ -436,6 +436,9 @@ the parameters given to you are a database name, predicate 2-4 data parameters a
   }
 }
 const deleteFile = async (pathname) => {
+  console.log("this is the pathfile of the delete file look at a me file");
+  console.log(pathname);
+
   const filePath = path.join("data", pathname, "results", "demo_test.csv");
   console.log(filePath);
   if (!fs.existsSync(filePath)) {
@@ -449,6 +452,17 @@ const deleteFile = async (pathname) => {
     console.log("File deleted successfully");
   });
   return;
+};
+const fixPricesHM = (data, dbName) => {
+  var data2 = data;
+  if (dbName === "hm") {
+    data2 = data.map((item) => {
+      item["mean1"] = item["mean1"] * 1000;
+      item["mean2"] = item["mean2"] * 1000;
+      return item;
+    });
+  }
+  return data2;
 };
 const callPythonMain = async (dbname, aggtype, grpattr, g1, g2) => {
   return new Promise((resolve, reject) => {
@@ -539,19 +553,19 @@ function emptyFileOriginalQuery() {
 }
 router.get("/", async (req, res) => {
   try {
-    console.log("2---------------------------------------------------");
     emptyFileOriginalQuery();
-    console.log("3---------------------------------------------------");
-    const dbname = req.query.dbname;
+    const dbname = decodeURIComponent(req.query.dbname as string);
     console.log(dbname);
-    const aggtype = (req.query.aggtype as string).toLowerCase();
+    const aggtype = decodeURIComponent(
+      req.query.aggtype as string
+    ).toLowerCase();
     console.log(aggtype);
 
-    const grpattr = req.query.grpattr;
+    const grpattr = decodeURIComponent(req.query.grpattr as string);
     console.log(grpattr);
-    const g1 = req.query.g1;
+    const g1 = decodeURIComponent(req.query.g1 as string);
     console.log(g1);
-    const g2 = req.query.g2;
+    const g2 = decodeURIComponent(req.query.g2 as string);
     console.log(g2);
 
     console.log("Starting Python process...");
@@ -569,6 +583,7 @@ router.get("/", async (req, res) => {
     res.status(status).send(error);
   }
 });
+
 router.get("/send-data", async (req, res) => {
   const index = req.query.prev ? parseInt(req.query.prev as string) : 0;
   const options = {
@@ -577,6 +592,7 @@ router.get("/send-data", async (req, res) => {
   const running = await checkIfProcessIsRunning();
   const dbName = req.query.dbName;
   console.log("look at me look at me ");
+  console.log(dbName);
   console.log(req.query);
 
   exec(
@@ -608,7 +624,7 @@ router.get("/send-data", async (req, res) => {
 
         const data = JSON.parse(sanitizedStdout);
         console.log("look here look here ");
-        console.log(data);
+        // console.log(data);
 
         if (data.length == 0) {
           if (isCurrentlyRunning) {
@@ -625,8 +641,8 @@ router.get("/send-data", async (req, res) => {
         console.log("-------------------------------");
 
         console.log("has done here");
-
-        const groupedData = data.reduce((acc: any, item: any) => {
+        var data2 = fixPricesHM(data, dbName);
+        const groupedData = data2.reduce((acc: any, item: any) => {
           const key = `${item.Attr1_str}-${item.Attr2_str}`;
           if (!acc[key]) {
             acc[key] = [];
@@ -635,8 +651,10 @@ router.get("/send-data", async (req, res) => {
           return acc;
         }, {} as Record<string, (typeof data)[0][]>);
 
-        const separatedArrays = Object.values(groupedData);
-        console.log(separatedArrays.length);
+        var separatedArrays = Object.values(groupedData);
+        //console.log(separatedArrays);
+        //console.log(separatedArrays.length);
+
         const sortedArrays2 = separatedArrays
           .map((item) => getMax(item))
           .map((item) => {

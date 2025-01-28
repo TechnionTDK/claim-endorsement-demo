@@ -136,7 +136,7 @@ const DataDisplay: React.FC<DataDisplayProps> = ({
           </div>
         </div>
 
-        <div className="font-size" id="DataDisplay-time">
+        <div id="DataDisplay-time" style={{ fontSize: "25px" }}>
           <div>
             {" "}
             {"<"}

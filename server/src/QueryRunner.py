@@ -16,8 +16,8 @@ TIME_SQL_QUERIES = {"x": datetime.timedelta(seconds=0)}
 
 def connect_sql_db(db_name):
     dotenv.load_dotenv(dotenv_path="data/database_connection.env")
-    USERNAME = os.getenv("CONNECTION_USERNAME")
-    PASSWORD = os.getenv("CONNECTION_PASSWORD")
+    USERNAME = 'postgres'
+    PASSWORD ='1708'
     SERVER = os.getenv("SERVER_IP")
     # DATABASE_NAME = os.getenv("DATABASE_NAME")
     url = sqlalchemy.engine.URL.create(

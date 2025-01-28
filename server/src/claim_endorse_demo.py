@@ -3,12 +3,11 @@ import sqlalchemy
 from ClaimEndorseFunctions import run_cherrypicking
 import utils
 import time
-
+import argparse
 from QueryRunner import connect_sql_db
 from constants import *
 import pandas as pd
 import json
-import argparse
 from dotenv import load_dotenv
 from my_config import DOTENV_PATH
 load_dotenv(dotenv_path=DOTENV_PATH)
@@ -93,6 +92,26 @@ db_name_to_config = {
         "where": '"DEPARTURE_DELAY" > 10',
         "min_group_size_in_results": 30,
     },
+    'H&M': {
+        "data_path": "data/hm",
+        "dataframe_path": "data/hm/merged.csv",
+        "string_cols": ['prod_name', 'product_type_name', 'product_group_name', 'graphical_appearance_name',
+                        'colour_group_name', 'perceived_colour_value_name', 'perceived_colour_master_name',
+                        'department_name', 'index_name', 'index_group_name', 'section_name', 'garment_group_name',
+                        'club_member_status', 'fashion_news_frequency'],
+        "database_name": "hm",
+        "target_attr": "price",
+        "translation_func": utils.make_translation_for_hm,
+        "exclude": ['article_id', 'product_code', 'product_type_no', 'graphical_appearance_no', 'colour_group_code',
+                    'perceived_colour_value_id', 'perceived_colour_master_id', 'index_code', 'index_group_no',
+                    'section_no', 'garment_group_no', 'detail_desc', 't_dat', 'customer_id', 'price', 'month', 
+                    'age', # age is the called-for group by attribute - but possibly add it back and remove the actual gb attribute
+                    'postal_code', 'prod_name', 'department_no'],
+        "is_numeric": ['price'],
+        "col_to_values_dict_path": "data/hm/col_to_values.json",
+        "where": 'True',
+        "min_group_size_in_results": 30,
+    },
 }
 
 
@@ -100,12 +119,12 @@ def verify_group_values(g1, g2, grp_attr, col_to_values_dict):
     grp_attr_values = col_to_values_dict[grp_attr]
     if g1 not in grp_attr_values:
         try:
-            g1 = float(g1)
+            g1 = int(g1)
         except:
             Exception(f"{g1} not in value list for {grp_attr} and conversion to float failed.\nValid values are: {grp_attr_values}.")
     if g2 not in grp_attr_values:
         try:
-            g2 = float(g2)
+            g2 = int(g2)
         except:
             Exception(
                 f"{g2} not in value list for {grp_attr} and conversion to float failed.\nValid values are: {grp_attr_values}.")
@@ -136,6 +155,7 @@ def claim_endorse(db_name, agg_type, grp_attr, g1, g2, output_path):
                                   min_group_size_in_results=conf["min_group_size_in_results"])
 
 
+
 def get_original_query_result(db_name, agg_type, grp_attr, g1, g2, output_path):
     conf = db_name_to_config[db_name]
     target_attr = conf["target_attr"]
@@ -163,7 +183,6 @@ def get_original_query_result(db_name, agg_type, grp_attr, g1, g2, output_path):
                 out.write(",")
         out.write("}")
         out.write('}')
-        
 
 
 
@@ -187,7 +206,8 @@ if __name__ == "__main__":
     output_paths = {
     "SO": "data/SO/results/demo_test.csv",
     "ACS7": "data/Folkstable/SevenStates/results/demo_test.csv",
-    "FLIGHTS": "data/flights/results/demo_test.csv"
+    "FLIGHTS": "data/flights/results/demo_test.csv",
+    "hm": "data/hm/results/demo_test.csv"
 }
 
     if(args.dbname =="SO"):
@@ -196,15 +216,20 @@ if __name__ == "__main__":
         if(args.dbname == "ACS7"):
             output = "data/Folkstable/SevenStates/results/demo_test.csv"
         else:
-            output = "data/flights/results/demo_test.csv"
+            if(args.dbname == "HM"):
+                output = "data/hm/results/demo_test.csv"
+                
+            else:
+                output = "data/flights/results/demo_test.csv"
     #for now use mean, but change it to args.aggtype when you know what values to send
     #claim_endorse("ACS7", "mean", "SEX", 1, 2, "data/Folkstable/SevenStates/results/demo_test.csv")
     #claim_endorse("FLIGHTS","count","DAY_OF_WEEK",1,6,"data/flights/results/demo_test.csv")
     
     
     print("thi is the name")
-
-    dbname = args.dbname.strip()
+    dbname=args.dbname
+    if(args.dbname == "HM"):
+        dbname = "H&M"
     print(dbname)
     print(args.aggtype)
     aggtype=""
@@ -213,17 +238,18 @@ if __name__ == "__main__":
     else:
          aggtype =args.aggtype
     print(args.grpattr)
+    print("---------------------------------------------------------------")
     print(args.g1)
     print(args.g2)
+    print("---------------------------------------------------------------")
     print(output)
 
-    if(dbname =="FLIGHTS"):
-        g1=1
-        g2=6
-    else:
-        g1=args.g1
-        g2=args.g2
+
+    g1=args.g1
+    g2=args.g2
     get_original_query_result(dbname,aggtype, args.grpattr, g1, g2,'../src/assets/demo_test_ORIGINAL.json' )
+    #claim_endorse("H&M", "count", "age", 25, 40, "data/SO/results/demo_test.csv")
+
     claim_endorse(dbname,aggtype, args.grpattr, g1, g2,output )
     #claim_endorse("SO", "mean", "MainBranch", 'I am a developer by profession', 'None of these', "data/SO/results/demo_test.csv")
 

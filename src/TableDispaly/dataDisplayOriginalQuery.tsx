@@ -6,9 +6,6 @@ import { MyContext } from "../App";
 
 import DataHeader from "./dataHeader";
 
-import PredicateComponent from "../UtilComps/PredicateComponent";
-import { Button } from "react-bootstrap";
-
 const DataDisplayOriginalQuery: React.FC = () => {
   const context = useContext(MyContext);
   const { originalQueryData } = context!;

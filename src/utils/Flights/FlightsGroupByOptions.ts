@@ -1,0 +1,16 @@
+export const FlightsGroupByOptions = [
+  "Airline",
+  "Day of Month",
+  "Day of Week",
+  "Departure Hour",
+  "Destination Airport",
+  "Origin Airport",
+  "Destination City",
+  "Destination State",
+  "Distance",
+  "Diverted",
+  "Month",
+  "Origin City",
+  "Origin State",
+  "Scheduled Departure Hour",
+];

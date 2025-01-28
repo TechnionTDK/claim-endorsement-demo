@@ -19,7 +19,8 @@
   width: 15vw;
   background-color: rgba(0, 0, 0, 0.8);
   color: white;
-  padding: 20px;
+  padding: 10px;
+
   border-radius: 10px;
   text-align: center;
   z-index: 1000;
@@ -39,7 +40,7 @@
   text-align: center;
   align-content: center;
   position: absolute;
-  top: -90px;
+  top: -105px;
   right: -516.5px;
 
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);

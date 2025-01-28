@@ -17,6 +17,7 @@ server/data/flights/
 server/data/SO/
 server/data/Folkstable/
 server/data/german_credit/
+server/data/hm/
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

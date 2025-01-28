@@ -90,8 +90,10 @@ function App() {
   ]);
   const normRef = useUpdateRef(normalizedData);
   const normRef2 = useUpdateRef(databaseData);
+  const topRef = useUpdateRef(top);
   const normIndex = useUpdateRef(index);
   const intervalref = useUpdateRef(intervalData);
+  const isChangeableRef = useUpdateRef(isChangeable);
   const clearIntervalWrapper = () => {
     clearInterval(intervalref.current);
     setIntervalData(0);
@@ -114,7 +116,9 @@ function App() {
     setIsChangeable(true);
   }, [intervalData, SortedData]);
   const stopCalculation = async () => {
-    const filepath = TranslatePath(selectedDatabase);
+    setIsChangeable(true);
+    setLoading(false);
+    const filepath = translateDB[selectedDatabase];
     await StopCalculationWrapper(filepath);
     setIndex(0);
     setDatabaseData({
@@ -122,9 +126,6 @@ function App() {
       grouped: [],
     });
     console.log("getting here");
-
-    setIsChangeable(true);
-    setLoading(false);
   };
 
   const startCalculation = async () => {
@@ -176,8 +177,10 @@ function App() {
 
       console.log(data);
       if (combinedData == null) {
-        if (!data || data.length == 0) {
-          alert("this query resulted in no results, please try another one");
+        if (!normRef || normRef.current.length == 0) {
+          alert(
+            "this query resulted in no results, please try another one dfhsdjfhkjsdhfjkdshfkjdshfjkd"
+          );
         }
 
         clearIntervalWrapper();
@@ -315,6 +318,7 @@ function App() {
     setAggregateFunction(0);
     setSelectedDatabase(database);
   };
+
   return (
     <div id="mainDiv">
       <MyContext.Provider
@@ -322,7 +326,7 @@ function App() {
           originalQueryData,
           clearIntervalWrapper,
           maxDiff,
-          isChangeable: isChangeable,
+          isChangeable: isChangeableRef.current,
           setLoadingStates,
           loadingStates,
           unfoldData,
@@ -389,14 +393,14 @@ function App() {
             )}
 
             <InfiniteScroll
-              dataLength={top}
+              dataLength={topRef.current}
               next={() =>
                 setTop((old) => {
                   if (SortedData == null) return 0;
 
-                  return old + 10 > SortedData.length
+                  return topRef.current + 10 > SortedData.length
                     ? SortedData.length
-                    : old + 10;
+                    : topRef.current + 10;
                 })
               }
               hasMore={

@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Form } from "react-bootstrap";
 import { Phase2Props } from "../utils/interfaces";
+
 import {
   groupByOptions,
   compareValues,
@@ -11,6 +12,7 @@ import PopupComponent from "../UtilComps/popupComponent";
 import { MyContext } from "../App";
 import { compareTitle } from "../utils/dataDump";
 import Select from "react-select";
+import Examples from "../TableDispaly/examples";
 const ClaimPhase: React.FC<Phase2Props> = ({}) => {
   const [display, setDisplay] = useState("");
   const context = useContext(MyContext);
@@ -65,7 +67,7 @@ const ClaimPhase: React.FC<Phase2Props> = ({}) => {
         className="phase2"
         idName="infoPopupPhase2"
       ></PopupComponent>
-
+      <Examples />
       <div>
         <div className="font-size">Group By:</div>
         <Select
@@ -153,6 +155,50 @@ const ClaimPhase: React.FC<Phase2Props> = ({}) => {
           <div className="half">
             <Select
               styles={sty}
+              id="compare2"
+              value={{
+                value:
+                  compareValues[selectedDatabase][
+                    groupByOptions[selectedDatabase][selectedGroupBy]
+                  ][selectedCompare2],
+                label:
+                  compareValues[selectedDatabase][
+                    groupByOptions[selectedDatabase][selectedGroupBy]
+                  ][selectedCompare2],
+              }}
+              isDisabled={!isChangeable}
+              options={compareValues[selectedDatabase][
+                groupByOptions[selectedDatabase][selectedGroupBy]
+              ]
+                .filter(
+                  (data) =>
+                    compareValues[selectedDatabase][
+                      groupByOptions[selectedDatabase][selectedGroupBy]
+                    ][selectedCompare1] !== data
+                )
+                .map((option, index) => ({
+                  value: option,
+                  label: option,
+                  index: index,
+                }))}
+              onChange={(e: any) => {
+                let searchValue = e.value;
+
+                setSelectedCompare2(
+                  compareValues[selectedDatabase][
+                    groupByOptions[selectedDatabase][selectedGroupBy]
+                  ].indexOf(searchValue)
+                );
+              }}
+            ></Select>
+          </div>
+
+          <div className="font-size" style={{ justifyContent: "center" }}>
+            &gt;
+          </div>
+          <div className="half">
+            <Select
+              styles={sty}
               id="compare1"
               value={{
                 value:
@@ -190,49 +236,6 @@ const ClaimPhase: React.FC<Phase2Props> = ({}) => {
                   }
                   return newIndex;
                 });
-              }}
-            ></Select>
-          </div>
-          <div className="font-size" style={{ justifyContent: "center" }}>
-            &lt;
-          </div>
-          <div className="half">
-            <Select
-              styles={sty}
-              id="compare2"
-              value={{
-                value:
-                  compareValues[selectedDatabase][
-                    groupByOptions[selectedDatabase][selectedGroupBy]
-                  ][selectedCompare2],
-                label:
-                  compareValues[selectedDatabase][
-                    groupByOptions[selectedDatabase][selectedGroupBy]
-                  ][selectedCompare2],
-              }}
-              isDisabled={!isChangeable}
-              options={compareValues[selectedDatabase][
-                groupByOptions[selectedDatabase][selectedGroupBy]
-              ]
-                .filter(
-                  (data) =>
-                    compareValues[selectedDatabase][
-                      groupByOptions[selectedDatabase][selectedGroupBy]
-                    ][selectedCompare1] !== data
-                )
-                .map((option, index) => ({
-                  value: option,
-                  label: option,
-                  index: index,
-                }))}
-              onChange={(e: any) => {
-                let searchValue = e.value;
-
-                setSelectedCompare2(
-                  compareValues[selectedDatabase][
-                    groupByOptions[selectedDatabase][selectedGroupBy]
-                  ].indexOf(searchValue)
-                );
               }}
             ></Select>
           </div>

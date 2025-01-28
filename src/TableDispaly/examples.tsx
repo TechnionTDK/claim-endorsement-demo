@@ -7,6 +7,7 @@ const dataBaseOptions2 = [
   "Masters earns more than Bachelors on avarage (Stack Overflow)",
   "Men earn more than Women on avarage (US Census)",
   "There are more delays on Saturdays than on Mondays (US Flights)",
+  "40 year olds buy more than 25 year olds (H&M)",
 ];
 const Examples: React.FC = () => {
   const context = useContext(MyContext);
@@ -50,6 +51,13 @@ const Examples: React.FC = () => {
       compare2: 6,
       aggregateFunction: 2,
     },
+    "40 year olds but more thay 25 year olds (H&M)": {
+      name: "HM",
+      groupBy: groupByOptions["HM"].indexOf("Age"),
+      compare1: 25,
+      compare2: 40,
+      aggregateFunction: 0,
+    },
   };
 
   const selectExample = (e: any) => {
@@ -69,21 +77,20 @@ const Examples: React.FC = () => {
     <div>
       <div
         style={{
-          marginTop: "1vw",
           display: "flex",
 
-          flexDirection: "row",
-          gap: "15px",
+          flexDirection: "column",
+          gap: "5px",
           alignItems: "center",
         }}
       >
-        <div className="font-size">Examples</div>
+        <div className="font-size">Examples:</div>
         <Form.Select
           disabled={!isChangeable}
           style={{
             height: "1.8vw",
-            fontSize: "0.6vw",
-            width: "20vw",
+            fontSize: "15.5px",
+            width: "14vw",
           }}
           value={example}
           onChange={(e) => selectExample(e)}
