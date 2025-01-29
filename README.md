@@ -20,8 +20,8 @@ How to run:
 
 Open 2 terminals, one in the base project folder and one in the 'server' folder and run the following command on each:
 
-In the terminal for the server you should see `Server running! port 3005`
-In the terminal for the frontend you should see `Local:   http://localhost:5173/`
+In the terminal for the server you should see `Server running! port 3005`.
+In the terminal for the frontend you should see `Local:   http://localhost:5173/`.
 
 ```js
 npm run dev
@@ -33,4 +33,4 @@ After both started,the server and the frontend should be online locally at ports
 Troubleshooting:
 
 - There are still requirements missing after running `pip install -r requirements.txt`:
-  - You can either install the missing requirments manually or alternatively you can download a copy of a virtualenv from `https://mega.nz/fm/ehgVjazQ`. paste the content of the envs folder to your miniconda envs folder which is usually located in `C:\Users\<USER_NAME>\miniconda3\envs`
+  - You can either install the missing requirments manually or alternatively you can download a copy of a virtualenv from `https://mega.nz/fm/ehgVjazQ`. Paste the content of the envs folder to your miniconda envs folder which is usually located in `C:\Users\<USER_NAME>\miniconda3\envs`
