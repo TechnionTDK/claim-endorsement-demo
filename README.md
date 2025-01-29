@@ -29,4 +29,6 @@ the condaenv does not need to be activcated beforehand.
 after both started,the server and site should be online locally.
 
 troubleshooting:
-There are still requirements missing after running `pip install -r requirements.txt`: - You can either install the missing requirments manually or alternatively you can download a copy of a virtualenv from `https://mega.nz/fm/ehgVjazQ`. paste the content of the envs folder to your miniconda envs folder which is usually located in `C:\Users\<USER_NAME>\miniconda3\envs`
+
+- There are still requirements missing after running `pip install -r requirements.txt`:
+  - You can either install the missing requirments manually or alternatively you can download a copy of a virtualenv from `https://mega.nz/fm/ehgVjazQ`. paste the content of the envs folder to your miniconda envs folder which is usually located in `C:\Users\<USER_NAME>\miniconda3\envs`
