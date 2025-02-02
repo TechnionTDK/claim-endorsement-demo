@@ -26,16 +26,7 @@ Installation:
 - Ensure npm, python and miniconda are installed on your local machine.
 - In order to install the React and Node.JS dependencies run the line `npm install all` from the command line twice. Once in the main project folder for the React dependencies and once from the 'server' folder for the Node.JS dependencies.
 - Create a conda virtual enviourment called `condaenv` using the command `conda create --name condaenv`and install the requirements using the command `pip install -r requirements.txt` to install all the requirements in the condaenv enviourment.
-- Update the file `my_config.py` to reflect where you want to have your .env file
-- Create the .env in the location listed in `myconfig.py`. It should have the following variables
 
-```js
-CONNECTION_USERNAME = "<YOUR POSTGRES USERNAME>";
-CONNECTION_PASSWORD = "<YOUR POSTGRES PASSWORD>";
-SERVER_IP = "<IP OF THE SERVER WHERE POSTGRES IS RUN>";
-GEMINI_KEY =
-  "<YOUR GOOGLE GEMINI KEY(NEEDED TO CONNECT TO GOOGLE GEMINI IN ORDER TO GET EXPLANATIONS)>";
-```
 
 How to run:
 
