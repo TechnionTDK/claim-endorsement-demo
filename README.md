@@ -19,7 +19,7 @@ GEMINI_KEY =
 ```
 5. Run the script server/src/upload_to_postgres.py to upload all 4 datasets into the corresponding databases.
 
-# Frontend Setup
+## Frontend Setup
 
 Installation:
 
