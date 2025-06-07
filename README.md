@@ -1,4 +1,4 @@
-# Claim Endorsement Demo
+# ClaimIt: Claim Endorsement Demo
 This is a github repository for the demo described in "ClaimIt: Finding Convincing Views to Endorse a Claim", a demo paper accepted to VLDB 2025.
 
 ## Backend Setup
