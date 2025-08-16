@@ -142,7 +142,7 @@ const Examples: React.FC = () => {
           disabled={!isChangeable}
           style={{
             height: "1.8vw",
-            fontSize: "15.5px",
+            fontSize: "30px",
             width: "14vw",
           }}
           value={example}
