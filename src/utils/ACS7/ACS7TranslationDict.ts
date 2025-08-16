@@ -1,5 +1,6 @@
 export const ACS7TranslationDict = {
   "US Census": "ACS7",
+  Sex: "SEX",
   Age_ACS7: "age_disc",
   "Usual hours worked per week past 12 months": "wkhp_disc",
   "School enrollment": "SCH",

@@ -15,17 +15,17 @@ TIME_SQL_QUERIES = {"x": datetime.timedelta(seconds=0)}
 
 
 def connect_sql_db(db_name):
-    dotenv.load_dotenv(dotenv_path="data/database_connection.env")
-    USERNAME = 'postgres'
-    PASSWORD ='1708'
+    dotenv.load_dotenv(dotenv_path="/database_connection.env")
+    USERNAME = os.getenv("CONNECTION_USERNAME")
+    PASSWORD = os.getenv("CONNECTION_PASSWORD")
     SERVER = os.getenv("SERVER_IP")
     # DATABASE_NAME = os.getenv("DATABASE_NAME")
     url = sqlalchemy.engine.URL.create(
         drivername="postgresql",
-        username=USERNAME,
+        username="postgres",
         host="localhost",
         port=5432,
-        password=PASSWORD,
+        password="1708",
         database=db_name
     )
     engine = sqlalchemy.create_engine(url)
@@ -72,7 +72,8 @@ class QueryRunnerBase(object):
     def run_query(self, query_args_dict, bucket_dict):
         query = self.prepare_query(query_args_dict, bucket_dict)
         time_before = datetime.datetime.now()
-        query_result = self.engine.execute(query)
+        with self.engine.connect() as conn:
+            query_result = conn.execute(query)
         time_after = datetime.datetime.now()
         TIME_SQL_QUERIES["x"] += (time_after - time_before)
         #with open(os.path.join(OUTPUT_DIR, 'log_mean_case_when_query.csv'), "a") as log_file:
@@ -227,8 +228,10 @@ class QueryRunnerMeanDiff(QueryRunnerBase):
         if self.compute_stat_sig:
             query_res_df['t_stat'] = query_res_df.apply(
                 lambda row: calc_t_stat(row['mean1'], row['N1'], row['s1'], row['mean2'], row['N2'], row['s2']), axis=1)
+            query_res_df['t_stat'] = query_res_df['t_stat'].astype(float)
             query_res_df['deg_freedom'] = query_res_df.apply(
                 lambda row: calc_mean_diff_degrees_freedom(row['N1'], row['s1'], row['N2'], row['s2']), axis=1)
+            query_res_df['deg_freedom'] = query_res_df['deg_freedom'].astype(float)
             query_res_df['pvalue'] = query_res_df.apply(lambda row: sp.stats.t.sf(np.abs(row['t_stat']), row['deg_freedom']) * 2,
                                                         axis=1)  # We are doing a two sided test
             query_res_df = query_res_df.rename({'t_stat': 'statistical_significance_stat'}, axis=1)

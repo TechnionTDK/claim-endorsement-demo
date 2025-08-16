@@ -2,7 +2,14 @@ import React, { useContext } from "react";
 import { Form } from "react-bootstrap";
 import { Phase1Props } from "../utils/interfaces.ts";
 import PopupComponent from "../UtilComps/popupComponent.tsx";
-const dataBaseOptions = ["Stack Overflow", "US Census", "Flights", "HM"];
+const dataBaseOptions = [
+  "Stack Overflow",
+  "US Census",
+  "Flights",
+  "HM",
+  "Diabetes",
+  "Zillow",
+];
 import logo from "../assets/logo/Logo.png";
 
 import { MyContext } from "../App.tsx";

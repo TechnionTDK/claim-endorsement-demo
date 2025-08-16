@@ -16,6 +16,7 @@ import Examples from "../TableDispaly/examples";
 const ClaimPhase: React.FC<Phase2Props> = ({}) => {
   const [display, setDisplay] = useState("");
   const context = useContext(MyContext);
+
   const {
     isChangeable,
     selectedDatabase,
@@ -57,6 +58,23 @@ const ClaimPhase: React.FC<Phase2Props> = ({}) => {
       wordBreak: "break-word", // Break words to fit within the container
       hyphens: "auto", // Add hyphens where appropriate
     }),
+  };
+  const myprint = () => {
+    /*console.log(compareValues);
+    console.log(selectedDatabase);
+    console.log(groupByOptions);
+    console.log(groupByOptions[selectedDatabase]);
+    console.log(selectedGroupBy);
+    console.log(groupByOptions[selectedDatabase][selectedGroupBy]);
+    console.log(compareValues[selectedDatabase]);
+    console.log(selectedCompare2);
+
+    console.log(
+      compareValues[selectedDatabase][
+        groupByOptions[selectedDatabase][selectedGroupBy]
+      ][selectedCompare2]
+    );*/
+    return true;
   };
   return (
     <div id="Phase2">
@@ -151,6 +169,7 @@ const ClaimPhase: React.FC<Phase2Props> = ({}) => {
           </div>
         </div>
         <div style={{ height: "10px" }}></div>
+        {myprint() && <div></div>}
         <div className="compare-Div-phase2">
           <div className="half">
             <Select

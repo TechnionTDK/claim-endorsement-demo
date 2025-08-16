@@ -12,7 +12,14 @@ import { HMTranslationDict } from "./HM/HMTranslationDict";
 import { StackOverflowCompareValues } from "./StackOverflow/StackOverflowCompareValues";
 import { StackOverflowGroupByOptions } from "./StackOverflow/StackOverflowGroupByOptions";
 import { StackOverflowTranslationDict } from "./StackOverflow/StackOverflowTranslationDict";
-
+import { DiabetesCompareValues } from "./Diabetes/DiabetesCompareValues";
+import { DiabetesGroupByOptions } from "./Diabetes/DiabetesGroupByOptions";
+import { DiabetesTranslationDict } from "./Diabetes/DiabetesTranslationDict";
+import { DiabetesValuesDict } from "./Diabetes/DiabetesValuesDict";
+import { ZillowGroupByOptions } from "./Zillow/ZillowGroupByOptions";
+import { ZillowCompareValues } from "./Zillow/ZillowCompareValues";
+import { ZillowTranslationDict } from "./Zillow/ZillowTranslationDict";
+import { ZillowValuesDict } from "./Zillow/ZillowValuesDict";
 interface groupByOptions {
   [key: string]: string[];
 }
@@ -24,9 +31,10 @@ interface aggregateOptions {
 }
 export const aggregateDB: aggregateOptions = {
   "Stack Overflow": "Converted Yearly Comp",
-  "US Census": "(is this ACS7?)PINCP",
+  "US Census": "PINCP",
   Flights: "Departure Delay",
   HM: "Price",
+  Diabetes: "Diabetes",
 };
 
 export const options = {
@@ -88,33 +96,46 @@ export const translateDB: { [key: string]: number } = {
   ["Flights"]: 1,
   ["US Census"]: 2,
   ["HM"]: 3,
+  ["Diabetes"]: 4,
+  ["Zillow"]: 5,
 };
 export const groupByOptions: groupByOptions = {
   "Stack Overflow": StackOverflowGroupByOptions,
   "US Census": ACS7GroupByOptions,
   Flights: FlightsGroupByOptions,
   HM: HMGroupByOptions,
+  Diabetes: DiabetesGroupByOptions,
+  Zillow: ZillowGroupByOptions,
 };
 export const compareValues: compareValues = {
   "Stack Overflow": StackOverflowCompareValues,
   "US Census": ASC7CompareValues,
   Flights: FlightsCompareValues,
   HM: HMCompareValues,
+  Diabetes: DiabetesCompareValues,
+  Zillow: ZillowCompareValues,
 };
 
-export const translationDict: { [key: string]: string } = {
-  ...StackOverflowTranslationDict,
-  ...ACS7TranslationDict,
-  ...FlightsTranslationDict,
-  ...HMTranslationDict,
-};
+export const translationDict: { [key: string]: { [subKey: string]: string } } =
+  {
+    "Stack Overflow": StackOverflowTranslationDict,
+    "US Census": ACS7TranslationDict,
+    Flights: FlightsTranslationDict,
+    HM: HMTranslationDict,
+    Diabetes: DiabetesTranslationDict,
+    Zillow: ZillowTranslationDict,
+  };
 export const valuesDict: { [key: string]: { [subKey: string]: string } } = {
   ...ACS7ValuesDict,
   ...FlightsValuesDict,
+  ...DiabetesValuesDict,
+  ...ZillowValuesDict,
 };
 export const compareTitle: { [key: string]: string } = {
   "Stack Overflow": "Salary",
   "US Census": "Salary",
   Flights: "Departure Delay",
   HM: "Price",
+  Diabetes: "Diabetes Prevalence",
+  Zillow: "Property value",
 };

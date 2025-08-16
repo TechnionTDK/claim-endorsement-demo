@@ -3,11 +3,12 @@ import sqlalchemy
 from ClaimEndorseFunctions import run_cherrypicking
 import utils
 import time
-import argparse
+
 from QueryRunner import connect_sql_db
 from constants import *
 import pandas as pd
 import json
+import argparse
 from dotenv import load_dotenv
 from my_config import DOTENV_PATH
 load_dotenv(dotenv_path=DOTENV_PATH)
@@ -112,6 +113,43 @@ db_name_to_config = {
         "where": 'True',
         "min_group_size_in_results": 30,
     },
+    'diabetes': {
+        'data_path': 'data/diabetes2',
+        "dataframe_path": "data/diabetes2/diabetes_prediction_dataset_binned_age.csv",
+        "string_cols": ['smoking_history', 'gender', 'Age_Category', 'bmi_category'],
+        "database_name": "diabetes",
+        "target_attr": "diabetes",
+        "translation_func": utils.make_translation_for_diabetes,
+        "exclude": ['age', 'diabetes10', 'age_category_numeric_consecutive', 'age_category_numeric', 'bmi'],
+        "is_numeric": ['age',  'bmi'],
+        "col_to_values_dict_path": "data/diabetes2/col_to_values.json", # TODO create
+        "where": 'True',
+        "min_group_size_in_results": 5,
+    },
+    'zillow': {
+        'data_path': 'data/zillow/zillow-prize-1',
+        "dataframe_path": "data/zillow/zillow-prize-1/properties_2016_clean_binned.csv",
+        "string_cols": ["bathroomcnt", "bedroomcnt", "calculatedfinishedsquarefeet", "fireplacecnt", "garagecarcnt",
+                        "hashottuborspa", "regionidcity", "regionidcounty", "unitcnt", "fireplaceflag",
+                        "year_range_built"],
+        "database_name": "zillow",
+        "target_attr": "taxvaluedollarcnt",
+        "translation_func": utils.make_translation_for_zillow,
+        "exclude": ['assessmentyear', 'basementsqft', 'buildingqualitytypeid', 'calculatedbathnbr',
+                    'censustractandblock', 'decktypeid', 'finishedfloor1squarefeet', 'finishedsquarefeet12',
+                    'finishedsquarefeet13', 'finishedsquarefeet15', 'finishedsquarefeet50', 'finishedsquarefeet6',
+                    'fips', 'fullbathcnt', 'garagetotalsqft', 'landtaxvaluedollarcnt', 'latitude', 'longitude',
+                    'lotsizesquarefeet', 'parcelid', 'poolsizesum', 'pooltypeid10', 'pooltypeid2', 'pooltypeid7',
+                    'propertycountylandusecode', 'propertyzoningdesc', 'rawcensustractandblock', 'regionidneighborhood',
+                    'regionidzip', 'roomcnt', 'structuretaxvaluedollarcnt', 'taxamount', 'taxdelinquencyflag',
+                    'taxdelinquencyyear', 'taxvaluedollarcnt', 'threequarterbathnbr', 'yardbuildingsqft17',
+                    'yardbuildingsqft26', 'year_range_built_numeric', 'yearbuilt'],
+        # Is binning needed - controlled by is_numeric
+        "is_numeric": [],
+        "col_to_values_dict_path": "data/zillow/zillow-prize-1/col_to_values.json",
+        "where": 'True',
+        "min_group_size_in_results": 5,
+    }
 }
 
 
@@ -119,12 +157,12 @@ def verify_group_values(g1, g2, grp_attr, col_to_values_dict):
     grp_attr_values = col_to_values_dict[grp_attr]
     if g1 not in grp_attr_values:
         try:
-            g1 = int(g1)
+            g1 = float(g1)#int?
         except:
             Exception(f"{g1} not in value list for {grp_attr} and conversion to float failed.\nValid values are: {grp_attr_values}.")
     if g2 not in grp_attr_values:
         try:
-            g2 = int(g2)
+            g2 = float(g2)
         except:
             Exception(
                 f"{g2} not in value list for {grp_attr} and conversion to float failed.\nValid values are: {grp_attr_values}.")
@@ -135,7 +173,11 @@ def verify_group_values(g1, g2, grp_attr, col_to_values_dict):
 
 def claim_endorse(db_name, agg_type, grp_attr, g1, g2, output_path):
     conf = db_name_to_config[db_name]
-    df = pd.read_csv(conf["dataframe_path"], index_col=0)
+    if db_name == "zillow":
+        df = pd.read_csv("data/zillow/zillow-prize-1/properties_2016_clean_binned.csv", index_col=0, dtype={'fireplacecnt': str})
+    else:
+        df = pd.read_csv(conf["dataframe_path"], index_col=0)
+
     trans_dict = conf["translation_func"](df.columns)
     allocation_flags = [col for col in df.columns if "allocation flag" in trans_dict[col]]
     exclude_list = conf["exclude"] + allocation_flags
@@ -155,21 +197,25 @@ def claim_endorse(db_name, agg_type, grp_attr, g1, g2, output_path):
                                   min_group_size_in_results=conf["min_group_size_in_results"])
 
 
-
 def get_original_query_result(db_name, agg_type, grp_attr, g1, g2, output_path):
     conf = db_name_to_config[db_name]
     target_attr = conf["target_attr"]
     agg_func = agg_type.upper() if agg_type != "mean" else "AVG"
-    query_string = f"""SELECT "{grp_attr}", {agg_func}("{target_attr}"), count("{target_attr}")
-                       FROM my_table 
-                       WHERE "{grp_attr}" IN ('{g1}','{g2}') GROUP BY "{grp_attr}";"""
+    if agg_func == "MEDIAN":
+
+        query_string = f"""SELECT "{grp_attr}", PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY "{target_attr}"), count("{target_attr}")
+                                   FROM my_table 
+                                   WHERE "{grp_attr}" IN ('{g1}','{g2}') GROUP BY "{grp_attr}";"""
+    else:
+        query_string = f"""SELECT "{grp_attr}", {agg_func}("{target_attr}"), count("{target_attr}")
+                           FROM my_table 
+                           WHERE "{grp_attr}" IN ('{g1}','{g2}') GROUP BY "{grp_attr}";"""
     query = sqlalchemy.text(query_string)
     engine = connect_sql_db(conf["database_name"])
     query_result = engine.execute(query)
     res = [x for x in query_result]
     print(res)
     with open(output_path, "w") as out:
-        out.write('{')
         out.write('"agg": {')
         for i, t in enumerate(res):
             out.write(f'"{t[0]}": {t[1]}')
@@ -182,14 +228,14 @@ def get_original_query_result(db_name, agg_type, grp_attr, g1, g2, output_path):
             if i < len(res)-1:
                 out.write(",")
         out.write("}")
-        out.write('}')
+        
+        
 
 
 
 
 if __name__ == "__main__":
-    #claim_endorse("SO", "mean", "EdLevel", 'Bachelor’s degree', 'Master’s degree', "data/SO/results/demo_test.csv")
-    # TODO: debug!
+   # TODO: debug!
     
     parser = argparse.ArgumentParser(description='Process some parameters for claim_endorse.')
     parser.add_argument('--dbname', type=str, required=True, help='database identifier')
@@ -207,7 +253,9 @@ if __name__ == "__main__":
     "SO": "data/SO/results/demo_test.csv",
     "ACS7": "data/Folkstable/SevenStates/results/demo_test.csv",
     "FLIGHTS": "data/flights/results/demo_test.csv",
-    "hm": "data/hm/results/demo_test.csv"
+    "hm": "data/hm/results/demo_test.csv",
+    "diabetes": "data/diabetes/results/demo_test.csv",
+    "zillow": "data/zillow/results/demo_test.csv"
 }
 
     if(args.dbname =="SO"):
@@ -221,6 +269,10 @@ if __name__ == "__main__":
                 
             else:
                 output = "data/flights/results/demo_test.csv"
+                if(args.dbname == "diabetes"):
+                    output = "data/diabetes2/results/demo_test.csv"
+                if(args.dbname == "zillow"):
+                    output = "data/zillow/results/demo_test.csv"
     #for now use mean, but change it to args.aggtype when you know what values to send
     #claim_endorse("ACS7", "mean", "SEX", 1, 2, "data/Folkstable/SevenStates/results/demo_test.csv")
     #claim_endorse("FLIGHTS","count","DAY_OF_WEEK",1,6,"data/flights/results/demo_test.csv")
@@ -251,5 +303,3 @@ if __name__ == "__main__":
     #claim_endorse("H&M", "count", "age", 25, 40, "data/SO/results/demo_test.csv")
 
     claim_endorse(dbname,aggtype, args.grpattr, g1, g2,output )
-    #claim_endorse("SO", "mean", "MainBranch", 'I am a developer by profession', 'None of these', "data/SO/results/demo_test.csv")
-

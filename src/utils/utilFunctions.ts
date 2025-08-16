@@ -42,18 +42,38 @@ export function TranslateForURL(
   console.log("use this^");
   let groupbyTextValue =
     groupByOptions[tempSelectedDatabase][tempSelectedGroupBy];
-  let db = translationDict[tempSelectedDatabase];
+  console.log("tempSelectedDatabase is ");
+  console.log(tempSelectedDatabase);
+
+  let db = translationDict[tempSelectedDatabase][tempSelectedDatabase];
+
+  console.log("2y4723647823647823647892364892364928748237489327492 ");
+  console.log(translationDict);
+  console.log(tempSelectedDatabase);
+
+  console.log(db);
+  console.log("2y4723647823647823647892364892364928748237489327492 ");
+
   let agg = aggregateFunctions[tempAggregateFunction];
-  let grp = translationDict[groupbyTextValue];
+  let grp = translationDict[tempSelectedDatabase][groupbyTextValue];
   let g1 =
     compareValues[tempSelectedDatabase][groupbyTextValue][tempSelectedCompare1];
   let g2 =
     compareValues[tempSelectedDatabase][groupbyTextValue][tempSelectedCompare2];
   let argtype = "int";
-  if (db == "ACS7" || db == "FLIGHTS") {
-    console.log(db);
-    console.log(g2);
+  if (db == "ACS7" || db == "FLIGHTS" || db == "diabetes" || db == "zillow") {
+    console.log(tempSelectedDatabase);
+    console.log(translationDict[tempSelectedDatabase]);
+    console.log(groupbyTextValue);
+    console.log(
+      "*************************************************************************"
+    );
+    console.log(agg);
+    console.log(grp);
     console.log(valuesDict[groupbyTextValue][g1]);
+    console.log(g1);
+    console.log(g2);
+
     console.log(valuesDict[groupbyTextValue]);
     console.log(valuesDict[groupbyTextValue][g2]);
     g1 = valuesDict[groupbyTextValue][g1];

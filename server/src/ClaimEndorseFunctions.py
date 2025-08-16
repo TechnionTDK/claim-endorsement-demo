@@ -170,7 +170,8 @@ class Bucket(object):
             engine = SQLEngineSingleton(db_name)
             query = sqlalchemy.text(f"""SELECT MIN("{attr_name}"), MAX("{attr_name}") 
                                         FROM my_table;""")
-            min_val, max_val = list(engine.execute(query))[0]
+            with engine.connect() as conn:
+                min_val, max_val = list(conn.execute(query))[0]
         interval_size = value_range_to_interval_size(max_val - min_val)
         # round max (up) and min (down) to the closest <interval_size>
         rounded_max = int(math.ceil(max_val / interval_size) * interval_size)
@@ -206,7 +207,8 @@ def make_sample_view(sample_size, from_table="my_table", to_table="sample_view",
 def get_DB_size(main_table, db_name, target_attr):
     engine = SQLEngineSingleton(db_name)
     query = sqlalchemy.text(f"""SELECT COUNT("{target_attr}") FROM {main_table};""")
-    return list(engine.execute(query))[0][0]
+    with engine.connect() as conn:
+        return list(conn.execute(query))[0][0]
 
 
 def single_attribute_cherrypicking(df, orig_df_size, grp_attr, cmp_attr, column_name, compare_list, aggr_list,

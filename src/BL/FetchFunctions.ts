@@ -1,6 +1,13 @@
 import { compareTitle } from "../utils/dataDump";
 
-let filepaths = ["SO", "flights", "Folkstable/SevenStates", "hm"];
+let filepaths = [
+  "SO",
+  "flights",
+  "Folkstable/SevenStates",
+  "hm",
+  "diabetes2",
+  "zillow",
+];
 export async function retrieveOriginalQuery() {
   const sleep = (ms: number) =>
     new Promise((resolve) => setTimeout(resolve, ms));
@@ -25,7 +32,7 @@ export async function retrieveOriginalQuery() {
     }
   } catch (error) {
     await sleep(1000);
-    console.error("Error fetching the file:", error);
+    //console.error("Error fetching the file:", error);
     return [0, 0, 0, 0];
   }
 }

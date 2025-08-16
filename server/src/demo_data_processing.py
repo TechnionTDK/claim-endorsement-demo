@@ -269,6 +269,55 @@ def h_and_m_dicts():
     f.close()
 
 
+def diabetes_dicts():
+    df = pd.read_csv("data/diabetes2/diabetes_prediction_dataset_binned_age.csv", index_col=0)
+    include = ['gender', 'hypertension', 'heart_disease', 'smoking_history',
+       'bmi_category', 'HbA1c_level', 'blood_glucose_level', 'diabetes', 'Age_Category']
+    trans_dict = make_translation_for_diabetes(include)
+    cols_order_by_desc = sorted(include, key=trans_dict.get)
+
+    f = open("data/diabetes2/col_to_desc_dict.json", "w")
+    f.write("{")
+    for i, col in enumerate(cols_order_by_desc):
+        f.write(f'"{col}":"{trans_dict[col]}"')
+        if i < len(cols_order_by_desc)-1:
+            f.write(", ")
+    f.write("}")
+    f.close()
+
+    col_to_values = {}
+    for k in include:
+        col_to_values[k] = sorted([v for v in df[k].unique() if not pd.isna(v)])
+
+    # convert numpy ints to basic ints for json serialization
+    for k in col_to_values:
+        vs = col_to_values[k]
+        if type(vs[0]) == np.int64:
+            col_to_values[k] = [int(v) for v in vs]
+
+    with open("data/diabetes2/col_to_values.json", "w") as outfile:
+        json.dump(col_to_values, outfile)
+
+    col_desc_to_values = {}
+    for k in col_to_values:
+        col_desc_to_values[trans_dict[k]] = col_to_values[k]
+
+    with open("data/diabetes2/col_desc_to_values.json", "w") as outfile:
+        json.dump(col_desc_to_values, outfile)
+
+    col_desc_and_value_to_value_desc = {}
+    for k in col_to_values:
+        for v in col_to_values[k]:
+            col_desc_and_value_to_value_desc[(trans_dict[k], v)] = safe_translate((k, v), trans_dict)
+    f = open("data/diabetes2/col_desc_and_value_to_value_desc.json", "w")
+    for k in col_to_values:
+        f.write('"'+trans_dict[k]+'"{\n')
+        for v in col_to_values[k]:
+            f.write(f'"{v}":"{safe_translate((k, v), trans_dict)}"\n')
+        f.write("}\n")
+    f.close()
+
+
 def SO_years_bucketize(x):
     if x <= 1:
         return "<1"
@@ -343,6 +392,58 @@ def SO_dicts():
     f.close()
 
 
+def zillow_dicts():
+    df = pd.read_csv("data/zillow/zillow-prize-1/properties_2016_clean_binned.csv", index_col=0, dtype={'fireplacecnt': str})
+    # include = ['airconditioningtypeid', 'architecturalstyletypeid', 'basementsqft', 'bathroomcnt', 'bedroomcnt', 'buildingqualitytypeid', 'buildingclasstypeid', 'calculatedbathnbr', 'decktypeid', 'finishedfloor1squarefeet', 'calculatedfinishedsquarefeet', 'finishedsquarefeet15', 'fireplacecnt', 'fireplaceflag', 'fullbathcnt', 'garagecarcnt', 'garagetotalsqft', 'hashottuborspa', 'heatingorsystemtypeid', 'numberofstories', 'poolcnt', 'poolsizesum', 'pooltypeid10', 'pooltypeid2', 'pooltypeid7', 'propertylandusetypeid', 'regionidcounty', 'regionidcity', 'regionidneighborhood', 'roomcnt', 'storytypeid', 'typeconstructiontypeid', 'unitcnt', 'yardbuildingsqft17', 'yardbuildingsqft26', 'yearbuilt', 'taxvaluedollarcnt', 'taxdelinquencyflag', 'taxdelinquencyyear', 'year_range_built']
+    include = ['airconditioningtypeid', 'architecturalstyletypeid', 'bathroomcnt', 'bedroomcnt', 'buildingclasstypeid', 'calculatedfinishedsquarefeet', 'fireplacecnt', 'garagecarcnt', 'hashottuborspa', 'heatingorsystemtypeid', 'poolcnt', 'propertylandusetypeid', 'regionidcity', 'regionidcounty', 'storytypeid', 'typeconstructiontypeid', 'unitcnt', 'numberofstories', 'fireplaceflag', 'year_range_built']
+    trans_dict = make_translation_for_zillow(include)
+    cols_order_by_desc = sorted(include, key=trans_dict.get)
+
+    f = open("data/zillow/zillow-prize-1/col_to_desc_dict.json", "w")
+    f.write("{")
+    for i, col in enumerate(cols_order_by_desc):
+        f.write(f'"{col}":"{trans_dict[col]}"')
+        if i < len(cols_order_by_desc)-1:
+            f.write(", ")
+    f.write("}")
+    f.close()
+
+    col_to_values = {}
+    for k in include:
+        #print(k)
+        #try:
+        col_to_values[k] = sorted([v for v in df[k].unique() if not pd.isna(v)])
+        #except:
+        #    print([v for v in df[k].unique() if not pd.isna(v)])
+        #    sys.exit()
+
+    # convert numpy ints to basic ints for json serialization
+    for k in col_to_values:
+        vs = col_to_values[k]
+        if type(vs[0]) == np.int64:
+            col_to_values[k] = [int(v) for v in vs]
+
+    with open("data/zillow/zillow-prize-1/col_to_values.json", "w") as outfile:
+        json.dump(col_to_values, outfile)
+
+    col_desc_to_values = {}
+    for k in col_to_values:
+        col_desc_to_values[trans_dict[k]] = col_to_values[k]
+
+    with open("data/zillow/zillow-prize-1/col_desc_to_values.json", "w") as outfile:
+        json.dump(col_desc_to_values, outfile)
+
+    col_desc_and_value_to_value_desc = {}
+    for k in col_to_values:
+        for v in col_to_values[k]:
+            col_desc_and_value_to_value_desc[(trans_dict[k], v)] = safe_translate((k, v), trans_dict)
+    f = open("data/zillow/zillow-prize-1/col_desc_and_value_to_value_desc.json", "w")
+    for k in col_to_values:
+        f.write('"'+trans_dict[k]+'"{\n')
+        for v in col_to_values[k]:
+            f.write(f'"{v}":"{safe_translate((k, v), trans_dict)}"\n')
+        f.write("}\n")
+    f.close()
 
 
 def df_to_sql_DB(df, db_name):
@@ -366,8 +467,11 @@ if __name__ == '__main__':
     # df_to_sql_DB(df, "flights_disc")
 
     # SO_bucketize_csv()
-    print("Reading new CSV")
-    df = pd.read_csv("data/SO/SO_disc.csv", index_col=0)
-    print("Uploading to database SO_disc. This may take a while.")
-    df_to_sql_DB(df, "SO_disc")
+    # print("Reading new CSV")
+    # df = pd.read_csv("data/SO/SO_disc.csv", index_col=0)
+    # print("Uploading to database SO_disc. This may take a while.")
+    # df_to_sql_DB(df, "SO_disc")
 
+    diabetes_dicts()
+
+    pass
