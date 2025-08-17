@@ -14,6 +14,8 @@ load_dotenv(dotenv_path=DOTENV_PATH)
 METRICS_SUBSET = [DF_MI_STRING, DF_ANOVA_F_STAT_STRING, DF_COSINE_SIMILARITY_STRING, DF_COVERAGE_STRING, DF_PVALUE_STRING,]
 MAX_ATOMS = 2
 
+path_prefix = "server/"
+
 db_name_to_config = {
     'ACS7': {
         "data_path": "data/Folkstable/SevenStates",
@@ -36,10 +38,10 @@ db_name_to_config = {
         "min_group_size_in_results": 30,
     },
     'SO': {
-        "data_path": "data/SO",
+        "data_path": path_prefix+"data/SO",
         # "dataframe_path": "data/SO/survey_results_public.csv",
         #"dataframe_path": "data/SO/temp_df_for_sql.csv",
-        "dataframe_path": "data/SO/SO_disc.csv",
+        "dataframe_path": path_prefix+"data/SO/SO_disc.csv",
         "string_cols": ['MainBranch', 'Employment', 'RemoteWork', 'CodingActivities', 'EdLevel', 'LearnCode',
                    'LearnCodeOnline', 'LearnCodeCoursesCert', 'DevType', 'OrgSize', 'PurchaseInfluence', 'BuyNewTool',
                    'Country', 'LanguageHaveWorkedWith', 'LanguageWantToWorkWith', 'DatabaseHaveWorkedWith',
@@ -64,7 +66,7 @@ db_name_to_config = {
                    ["Frequency_" + str(i) for i in range(1, 4)] +
                    ["TrueFalse_" + str(i) for i in range(1, 4)],
         "is_numeric": ["ConvertedCompYearly"],
-        "col_to_values_dict_path": "data/SO/col_to_values.json",
+        "col_to_values_dict_path": path_prefix+"data/SO/col_to_values.json",
         "where": "TRUE",
         "min_group_size_in_results": 10,
     },

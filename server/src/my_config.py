@@ -1,1 +1,1 @@
-DOTENV_PATH = 'D:\Git\claim-endorsement-demo\server\src\database_connection_dummy.env'
+DOTENV_PATH = r'C:\Users\shunita\OneDrive - Technion\kira\Benny\cherrypicking\claim endorse demo\claim-endorsement-demo\server\src\database_connection.env'

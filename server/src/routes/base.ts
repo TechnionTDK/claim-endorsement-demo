@@ -10,7 +10,7 @@ import psTree from "ps-tree";
 let isCurrentlyRunning = false;
 let filepaths = ["SO", "flights", "Folkstable/SevenStates"];
 const dotenv_path =
-  "D:\\Git\\claim-endorsement-demo\\server\\src\\database_connection_dummy.env";
+  "server\\src\\database_connection.env";
 dotenv.config({ path: dotenv_path });
 const apiKey = process.env.GEMINI_KEY;
 const genAI = new GoogleGenerativeAI(apiKey);
@@ -473,7 +473,7 @@ const callPythonMain = async (dbname, aggtype, grpattr, g1, g2) => {
       [
         "run",
         "-n",
-        "condaenv",
+        "claimit",
         "python",
         "src/claim_endorse_demo.py",
         "--dbname",

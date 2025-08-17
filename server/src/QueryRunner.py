@@ -9,23 +9,24 @@ import scipy as sp
 import os
 
 # from config import *
+from my_config import DOTENV_PATH
 from utils import calc_t_stat, calc_mean_diff_degrees_freedom, calc_chi_squared_stat, get_attr_and_value_fields
 
 TIME_SQL_QUERIES = {"x": datetime.timedelta(seconds=0)}
 
 
 def connect_sql_db(db_name):
-    dotenv.load_dotenv(dotenv_path="data/database_connection.env")
-    USERNAME = 'postgres'
-    PASSWORD ='1708'
-    SERVER = os.getenv("SERVER_IP")
+    dotenv.load_dotenv(dotenv_path=DOTENV_PATH)
+    # USERNAME = 'postgres'
+    # PASSWORD ='1708'
+    # SERVER = os.getenv("SERVER_IP")
     # DATABASE_NAME = os.getenv("DATABASE_NAME")
     url = sqlalchemy.engine.URL.create(
         drivername="postgresql",
-        username=USERNAME,
+        username=os.getenv("CONNECTION_USER"),
         host="localhost",
-        port=5432,
-        password=PASSWORD,
+        port=os.getenv("SERVER_PORT"),
+        password=os.getenv("CONNECTION_PASSWORD"),
         database=db_name
     )
     engine = sqlalchemy.create_engine(url)

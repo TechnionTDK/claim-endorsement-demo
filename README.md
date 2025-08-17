@@ -3,29 +3,30 @@ This is a github repository for the demo described in "ClaimIt: Finding Convinci
 
 ## Backend Setup
 1. Downloading the data files:
-Download the 4 directories and their files from the [link](https://technionmail-my.sharepoint.com/:f:/g/personal/shunita_campus_technion_ac_il/Egf-pA0G3k9ErDCE4wCnE-IBF59yCKsiblO2R1MAhl07jw?e=PZI4W3) and place them under server/data/.
+Download the data directories and their files from the [link](https://technionmail-my.sharepoint.com/:f:/g/personal/shunita_campus_technion_ac_il/Egf-pA0G3k9ErDCE4wCnE-IBF59yCKsiblO2R1MAhl07jw?e=PZI4W3) and place them under server/data/.
 
 1. Setup a postgresql database on the machine that will be used to run the server. Refer to https://www.postgresql.org/download/ for instructions for your specific machine.
-1. To support the 4 datasets of the paper, create new databases with the following names: ACS7_disc, SO_disc, flights_disc, hm.
+1. To support the 4 datasets described the paper, create new databases with the following names: ACS7_disc, SO_disc, flights_disc, hm.
 
 1. Prepare an enviroment file:
 1.1 Update the file `my_config.py` to reflect where you want to have your .env file. Then create the .env in the location listed in `myconfig.py`. It should have the following variables:
 ```js
-CONNECTION_USERNAME = "<YOUR POSTGRES USERNAME>";
-CONNECTION_PASSWORD = "<YOUR POSTGRES PASSWORD>";
-SERVER_IP = "<IP OF THE SERVER WHERE POSTGRES IS RUN>";
+CONNECTION_USERNAME = "<YOUR POSTGRES USERNAME>"
+CONNECTION_PASSWORD = "<YOUR POSTGRES PASSWORD>"
+SERVER_IP = "<IP OF THE SERVER WHERE POSTGRES IS RUN>"
 GEMINI_KEY =
-  "<YOUR GOOGLE GEMINI KEY(NEEDED TO CONNECT TO GOOGLE GEMINI IN ORDER TO GET EXPLANATIONS)>";
+  "<YOUR GOOGLE GEMINI KEY(NEEDED TO CONNECT TO GOOGLE GEMINI IN ORDER TO GET EXPLANATIONS)>"
 ```
-5. Run the script server/src/upload_to_postgres.py to upload all 4 datasets into the corresponding databases.
+See [gemini documentation](https://ai.google.dev/gemini-api/docs/api-key) for creating an API key.
+1. Create a conda virtual environment called `condaenv` using the command `conda create --name condaenv`and install the requirements using the command `pip install -r requirements.txt` to install all the requirements in the condaenv enviourment.
+1. Run the script server/src/upload_to_postgres.py to upload all 4 datasets into the corresponding databases.
 
 ## Frontend Setup
 
 Installation:
 
 - Ensure npm, python and miniconda are installed on your local machine.
-- In order to install the React and Node.JS dependencies run the line `npm install all` from the command line twice. Once in the main project folder for the React dependencies and once from the 'server' folder for the Node.JS dependencies.
-- Create a conda virtual enviourment called `condaenv` using the command `conda create --name condaenv`and install the requirements using the command `pip install -r requirements.txt` to install all the requirements in the condaenv enviourment.
+- In order to install the React and Node.JS dependencies run the line `npm install all` from the command line twice: Once in the main project folder for the React dependencies and once from the 'server' folder for the Node.JS dependencies.
 
 
 How to run:
