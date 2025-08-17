@@ -9,6 +9,8 @@ import DataHeader from "./dataHeader";
 const DataDisplayOriginalQuery: React.FC = () => {
   const context = useContext(MyContext);
   const { originalQueryData } = context!;
+  console.log("Original Query Data:", originalQueryData);
+
   // Define the translation object with the specified type
   return (
     <div

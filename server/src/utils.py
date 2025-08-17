@@ -226,6 +226,78 @@ def make_translation_for_hm(fields_list):
     return trans_dict
 
 
+def make_translation_for_diabetes(fields_list):
+    trans_dict = {c: c.replace("_", " ").lower() for c in fields_list}
+    return trans_dict
+
+
+def bucketize(x, thresholds, labels=None):
+    # labels should be longer than thresholds by 1 item.
+    for i, t in enumerate(thresholds):
+        if x < t:
+            if labels is not None:
+                return labels[i]
+            return i + 1  # default labels: 1,2,3,...
+        if x >= thresholds[-1]:
+            if labels is not None:
+                return labels[len(thresholds)]
+            return len(thresholds) + 1
+
+
+def zillow_preprocessing():
+    zillow = pd.read_csv("data/zillow/zillow-prize-1/properties_2016_clean_for_year_range.csv", index_col=0)
+    region_dict = pd.read_csv("data\zillow\zillow_nasdaq\ZILLOW_REGIONS.csv")
+    d = region_dict.set_index("region_id")["region"].to_dict()
+    region_cols = [c for c in zillow.columns if "region" in c]
+    for col in region_cols:
+        zillow[col] = zillow[col].apply(lambda x: d.get(x).split(";")[0] if x in d else x)
+    zillow['fireplaceflag'] = zillow['fireplaceflag'].fillna(False)
+    zillow['fireplaceflag'] = zillow['fireplaceflag'].map({True: "yes", False: "no"})
+    zillow['poolcnt'] = zillow['poolcnt'].fillna(0)
+    zillow['hashottuborspa'] = zillow['hashottuborspa'].fillna(False)
+    zillow['hashottuborspa'] = zillow['hashottuborspa'].map({True: "yes", False: "no"})
+    zillow['garagecarcnt'] = zillow['garagecarcnt'].fillna(0)
+    zillow['garagecarcnt'] = zillow['garagecarcnt'].apply(
+        lambda x: bucketize(x, [1, 2, 3, 4, 5], ["0", "1", "2", "3", "4", ">4"]))
+    zillow['bathroomcnt'] = zillow['bathroomcnt'].apply(
+        lambda x: bucketize(x, range(1, 12), [str(i) for i in range(0, 11)] + [">10"]))
+    zillow['bedroomcnt'] = zillow['bedroomcnt'].apply(
+        lambda x: bucketize(x, range(1, 12), [str(i) for i in range(0, 11)] + [">10"]))
+    zillow['fireplacecnt'] = zillow['fireplacecnt'].fillna(0)
+    zillow['fireplacecnt'] = zillow['fireplacecnt'].apply(
+        lambda x: bucketize(x, range(1, 6), [str(i) for i in range(0, 5)] + [">4"]))
+    zillow['unitcnt'] = zillow['unitcnt'].apply(
+        lambda x: bucketize(x, [1, 2, 3, 4, 5, 11], ["0", "1", "2", "3", "4", "5-10", ">10"]))
+    zillow['calculatedfinishedsquarefeet'] = zillow['calculatedfinishedsquarefeet'].apply(
+        lambda x: bucketize(x, [1001, 1501, 2001, 2501, 3001, 4001],
+                            ["<1K", "1K-1.5K", "1.5K-2K", "2K-2.5K", "2.5K-3K", "3K-4K", ">4K"]))
+    zillow.to_csv("data/zillow/zillow-prize-1/properties_2016_clean_binned.csv")
+
+
+
+def make_translation_for_zillow(fields_list):
+    data_path = "data/zillow/zillow-prize-1/field_mappings/"
+    data_dict = pd.read_csv(os.path.join(data_path, "col_to_description.csv"))
+    for field in ('Feature', 'Description'):
+        data_dict[field] = data_dict[field].apply(lambda x: x.strip(("' ")))
+    trans_dict = data_dict.set_index('Feature').to_dict()['Description']
+    trans_dict['year_range_built'] = 'Year range built'
+    trans_dict['year_range_built_numeric'] = 'Year range built numeric'
+
+    #print(f"missing mapping for: {[field for field in fields_list if field not in trans_dict]}")
+
+    value_dict_files = [f for f in os.listdir(data_path) if (f.endswith("csv") and f != 'col_to_description.csv')]
+    for value_file in value_dict_files:
+        vd = pd.read_csv(os.path.join(data_path, value_file))
+        field_name = value_file.split(".")[0]
+        vd.columns = ['value', 'desc']
+        vd = vd.set_index('value').to_dict()['desc']
+        for value, desc in vd.items():
+            trans_dict[(field_name, value)] = desc
+    return trans_dict
+
+
+
 def prepare_for_regression(df, data_path, attrs):
     if "Folkstable" not in data_path:
         return df

@@ -209,7 +209,7 @@ function App() {
         group
       )();
     } catch (error) {
-      console.error("Error fetching data:", error);
+      // console.error("Error fetching data:", error);
     }
   };
 
@@ -297,6 +297,8 @@ function App() {
     compare2: number,
     aggregateFunction: number
   ) => {
+    console.log("this is the groupby", groupBy);
+
     setSelectedDatabase(database);
     setSelectedGroupBy(groupBy);
     setSelectedCompare1(compare1);

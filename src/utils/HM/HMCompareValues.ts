@@ -1,5 +1,5 @@
 export const HMCompareValues = {
-  age: [
+  Age: [
     "18",
     "19",
     "20",
@@ -49,7 +49,7 @@ export const HMCompareValues = {
     "64",
     "65",
   ],
-  "product type name": [
+  "Product Type Name": [
     "Accessories set",
     "Alice band",
     "Baby Bib",
@@ -179,7 +179,7 @@ export const HMCompareValues = {
     "Wood balls",
     "Zipper head",
   ],
-  "product group name": [
+  "Product Group Name": [
     "Accessories",
     "Bags",
     "Cosmetic",
@@ -200,7 +200,7 @@ export const HMCompareValues = {
     "Underwear/nightwear",
     "Unknown",
   ],
-  "graphical appearance name": [
+  "Graphical Appearance Name": [
     "All over pattern",
     "Application/3D",
     "Argyle",
@@ -232,7 +232,7 @@ export const HMCompareValues = {
     "Treatment",
     "Unknown",
   ],
-  "colour group name": [
+  "Colour Group Name": [
     "Beige",
     "Black",
     "Blue",
@@ -284,7 +284,7 @@ export const HMCompareValues = {
     "Yellow",
     "Yellowish Brown",
   ],
-  "perceived colour value name": [
+  "Perceived Colour Value Name": [
     "Bright",
     "Dark",
     "Dusty Light",
@@ -294,7 +294,7 @@ export const HMCompareValues = {
     "Undefined",
     "Unknown",
   ],
-  "perceived colour master name": [
+  "Perceived Colour Master Name": [
     "Beige",
     "Black",
     "Blue",
@@ -316,7 +316,7 @@ export const HMCompareValues = {
     "Yellowish Green",
     "undefined",
   ],
-  "department name": [
+  "Department Name": [
     "AK Bottoms",
     "AK Dresses & Outdoor",
     "AK Other",
@@ -562,7 +562,7 @@ export const HMCompareValues = {
     "Young Girl UW/NW",
     "Young boy Swimwear",
   ],
-  "index name": [
+  "Index Name": [
     "Baby Sizes 50-98",
     "Children Accessories, Swimwear",
     "Children Sizes 134-170",
@@ -574,14 +574,14 @@ export const HMCompareValues = {
     "Menswear",
     "Sport",
   ],
-  "index group name": [
+  "Index Group Name": [
     "Baby/Children",
     "Divided",
     "Ladieswear",
     "Menswear",
     "Sport",
   ],
-  "section name": [
+  "Section Name": [
     "Baby Boy",
     "Baby Essentials & Complements",
     "Baby Girl",
@@ -639,7 +639,7 @@ export const HMCompareValues = {
     "Young Boy",
     "Young Girl",
   ],
-  "garment group name": [
+  "Garment Group Name": [
     "Accessories",
     "Blouses",
     "Dressed",
@@ -662,12 +662,12 @@ export const HMCompareValues = {
     "Unknown",
     "Woven/Jersey/Knitted mix Baby",
   ],
-  "sales channel id": ["1", "2"],
+  "Sales Channel ID": ["1", "2"],
   fn: ["0.0", "1.0"],
-  active: ["1.0", "0.0"],
-  "club member status": ["ACTIVE", "LEFT CLUB", "PRE-CREATE"],
-  "fashion news frequency": ["Monthly", "NONE", "Regularly"],
-  "day of month": [
+  Active: ["1.0", "0.0"],
+  "Club Member Status": ["ACTIVE", "LEFT CLUB", "PRE-CREATE"],
+  "Fashion News Frequency": ["Monthly", "NONE", "Regularly"],
+  "Day of Month": [
     "1",
     "2",
     "3",

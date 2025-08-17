@@ -8,7 +8,6 @@ import dotenv from "dotenv";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import psTree from "ps-tree";
 let isCurrentlyRunning = false;
-let filepaths = ["SO", "flights", "Folkstable/SevenStates"];
 const dotenv_path =
   "server\\src\\database_connection.env";
 dotenv.config({ path: dotenv_path });
@@ -695,6 +694,8 @@ router.post("/LLM", async (req, res) => {
   const g1 = `"${g1Name} ${func} ${compare}":${g1CompareValue}`;
   const g2 = `"${g2Name} ${func} ${compare}":${g2CompareValue}`;
   let sentence;
+  console.log("THIS IS THE DATABASE", databaseName);
+
   switch (databaseName) {
     case "Flights":
       let splitted1 = g1Value.split("-")[1].split(" ")[0];
@@ -732,6 +733,11 @@ router.post("/LLM", async (req, res) => {
       break;
     case "ACS":
       break;
+    case "HM":
+      sentence = `Among those who are ${predicate}, people who are ${g1Name} have spent more than people who are ${g2Name}.`;
+      break;
+    case "Diabetes":
+      sentence = `Among those with ${predicate}, people who are ${g1Name} are more likely to have diabetes than those who are ${g2Name}.`;
 
     default:
       break;
