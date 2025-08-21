@@ -181,7 +181,7 @@ def verify_group_values(g1, g2, grp_attr, col_to_values_dict):
             if g not in grp_attr_values:
                 raise Exception(f"{g} not in value list for {grp_attr}.\nValid values are: {grp_attr_values}.")
         group_values[i] = g
-    if g1 in grp_attr_values and g2 in grp_attr_values:
+    if group_values[0] in grp_attr_values and group_values[1] in grp_attr_values:
         return group_values[0], group_values[1]
     raise Exception(f"{group_values[0]} or {group_values[1]} not in value list for {grp_attr}.\nValid values are: {grp_attr_values}.")
 
