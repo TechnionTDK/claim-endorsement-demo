@@ -595,7 +595,7 @@ router.get("/send-data", async (req, res) => {
   console.log(req.query);
 
   exec(
-    `py src/1-CreateData.py ${index} ${dbName}`,
+    `conda run -n claimit python src/1-CreateData.py ${index} ${dbName}`,
     options,
     (error, stdout, stderr) => {
       if (error) {
