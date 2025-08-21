@@ -15,7 +15,8 @@ load_dotenv(dotenv_path=DOTENV_PATH)
 METRICS_SUBSET = [DF_MI_STRING, DF_ANOVA_F_STAT_STRING, DF_COSINE_SIMILARITY_STRING, DF_COVERAGE_STRING, DF_PVALUE_STRING,]
 MAX_ATOMS = 2
 
-path_prefix = "server/"
+# path_prefix = "server/"
+path_prefix = ""
 
 db_name_to_config = {
     'ACS7': {
@@ -154,23 +155,35 @@ db_name_to_config = {
     }
 }
 
+def string_to_int(s):
+    try:
+        return int(s)
+    except ValueError:
+        return s
+
+
+def string_to_float(s):
+    try:
+        return float(s)
+    except ValueError:
+        return s
+
 
 def verify_group_values(g1, g2, grp_attr, col_to_values_dict):
     grp_attr_values = col_to_values_dict[grp_attr]
-    if g1 not in grp_attr_values:
-        try:
-            g1 = float(g1)#int?
-        except:
-            Exception(f"{g1} not in value list for {grp_attr} and conversion to float failed.\nValid values are: {grp_attr_values}.")
-    if g2 not in grp_attr_values:
-        try:
-            g2 = float(g2)
-        except:
-            Exception(
-                f"{g2} not in value list for {grp_attr} and conversion to float failed.\nValid values are: {grp_attr_values}.")
+    group_values = [g1, g2]
+    for i in range(2):
+        g = group_values[i]
+        if g not in grp_attr_values:
+            g = string_to_int(g)
+            if type(g) == str:
+                g = string_to_float(g)
+            if g not in grp_attr_values:
+                raise Exception(f"{g} not in value list for {grp_attr}.\nValid values are: {grp_attr_values}.")
+        group_values[i] = g
     if g1 in grp_attr_values and g2 in grp_attr_values:
-        return g1, g2
-    raise Exception(f"{g1} or {g2} not in value list for {grp_attr}.\nValid values are: {grp_attr_values}.")
+        return group_values[0], group_values[1]
+    raise Exception(f"{group_values[0]} or {group_values[1]} not in value list for {grp_attr}.\nValid values are: {grp_attr_values}.")
 
 
 def claim_endorse(db_name, agg_type, grp_attr, g1, g2, output_path):
@@ -204,7 +217,6 @@ def get_original_query_result(db_name, agg_type, grp_attr, g1, g2, output_path):
     target_attr = conf["target_attr"]
     agg_func = agg_type.upper() if agg_type != "mean" else "AVG"
     if agg_func == "MEDIAN":
-
         query_string = f"""SELECT "{grp_attr}", PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY "{target_attr}"), count("{target_attr}")
                                    FROM my_table 
                                    WHERE "{grp_attr}" IN ('{g1}','{g2}') GROUP BY "{grp_attr}";"""
@@ -214,10 +226,13 @@ def get_original_query_result(db_name, agg_type, grp_attr, g1, g2, output_path):
                            WHERE "{grp_attr}" IN ('{g1}','{g2}') GROUP BY "{grp_attr}";"""
     query = sqlalchemy.text(query_string)
     engine = connect_sql_db(conf["database_name"])
-    query_result = engine.execute(query)
+    with engine.connect() as conn:
+        query_result = conn.execute(query)
+    #query_result = engine.execute(query)
     res = [x for x in query_result]
     print(res)
     with open(output_path, "w") as out:
+        out.write("{")
         out.write('"agg": {')
         for i, t in enumerate(res):
             out.write(f'"{t[0]}": {t[1]}')
@@ -230,6 +245,7 @@ def get_original_query_result(db_name, agg_type, grp_attr, g1, g2, output_path):
             if i < len(res)-1:
                 out.write(",")
         out.write("}")
+        out.write("}")
         
         
 
@@ -237,8 +253,6 @@ def get_original_query_result(db_name, agg_type, grp_attr, g1, g2, output_path):
 
 
 if __name__ == "__main__":
-   # TODO: debug!
-    
     parser = argparse.ArgumentParser(description='Process some parameters for claim_endorse.')
     parser.add_argument('--dbname', type=str, required=True, help='database identifier')
     parser.add_argument('--aggtype', type=str, required=True, help='Aggregate function')
@@ -252,56 +266,43 @@ if __name__ == "__main__":
     
     
     output_paths = {
-    "SO": "data/SO/results/demo_test.csv",
-    "ACS7": "data/Folkstable/SevenStates/results/demo_test.csv",
-    "FLIGHTS": "data/flights/results/demo_test.csv",
-    "hm": "data/hm/results/demo_test.csv",
-    "diabetes": "data/diabetes/results/demo_test.csv",
-    "zillow": "data/zillow/results/demo_test.csv"
-}
+        "SO": "data/SO/results/demo_test.csv",
+        "ACS7": "data/Folkstable/SevenStates/results/demo_test.csv",
+        "FLIGHTS": "data/flights/results/demo_test.csv",
+        "hm": "data/hm/results/demo_test.csv",
+        "diabetes": "data/diabetes2/results/demo_test.csv",
+        "zillow": "data/zillow/results/demo_test.csv"
+    }
 
-    if(args.dbname =="SO"):
-        output = "data/SO/results/demo_test.csv"
-    else:
-        if(args.dbname == "ACS7"):
-            output = "data/Folkstable/SevenStates/results/demo_test.csv"
-        else:
-            if(args.dbname == "HM"):
-                output = "data/hm/results/demo_test.csv"
-                
-            else:
-                output = "data/flights/results/demo_test.csv"
-                if(args.dbname == "diabetes"):
-                    output = "data/diabetes2/results/demo_test.csv"
-                if(args.dbname == "zillow"):
-                    output = "data/zillow/results/demo_test.csv"
     #for now use mean, but change it to args.aggtype when you know what values to send
     #claim_endorse("ACS7", "mean", "SEX", 1, 2, "data/Folkstable/SevenStates/results/demo_test.csv")
     #claim_endorse("FLIGHTS","count","DAY_OF_WEEK",1,6,"data/flights/results/demo_test.csv")
     
     
     print("thi is the name")
-    dbname=args.dbname
-    if(args.dbname == "HM"):
+    dbname = args.dbname
+    if args.dbname == "HM":
         dbname = "H&M"
     print(dbname)
+
     print(args.aggtype)
-    aggtype=""
-    if(args.aggtype == "avg"):
+    aggtype = args.aggtype
+    if args.aggtype == "avg":
         aggtype = "mean"
-    else:
-         aggtype =args.aggtype
+
     print(args.grpattr)
     print("---------------------------------------------------------------")
     print(args.g1)
     print(args.g2)
     print("---------------------------------------------------------------")
-    print(output)
+    print(output_paths[args.dbname])
 
 
-    g1=args.g1
-    g2=args.g2
-    get_original_query_result(dbname,aggtype, args.grpattr, g1, g2,'../src/assets/demo_test_ORIGINAL.json' )
+    g1 = args.g1
+    g2 = args.g2
+    get_original_query_result(dbname, aggtype, args.grpattr, g1, g2, '../src/assets/demo_test_ORIGINAL.json')
     #claim_endorse("H&M", "count", "age", 25, 40, "data/SO/results/demo_test.csv")
 
-    claim_endorse(dbname,aggtype, args.grpattr, g1, g2,output )
+    claim_endorse(dbname, aggtype, args.grpattr, g1, g2, output_paths[args.dbname])
+    with open("done_filename.txt", "w") as f:
+        f.write("done!")
