@@ -8,8 +8,7 @@ import dotenv from "dotenv";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import psTree from "ps-tree";
 let isCurrentlyRunning = false;
-const dotenv_path =
-  "server\\src\\database_connection.env";
+const dotenv_path = "server\\src\\database_connection.env";
 dotenv.config({ path: dotenv_path });
 const apiKey = process.env.GEMINI_KEY;
 const genAI = new GoogleGenerativeAI(apiKey);
@@ -623,7 +622,14 @@ router.get("/send-data", async (req, res) => {
 
         const data = JSON.parse(sanitizedStdout);
         console.log("look here look here ");
-        // console.log(data);
+        console.log(data[0]);
+        data.forEach((dataPoint) => {
+          dataPoint.uniqueKey =
+            dataPoint.Attr1 +
+            dataPoint.Attr2 +
+            dataPoint.Value1_str +
+            dataPoint.Value2_str;
+        });
 
         if (data.length == 0) {
           if (isCurrentlyRunning) {

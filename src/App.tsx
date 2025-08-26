@@ -89,6 +89,7 @@ function App() {
     0, 0, 0, 0,
   ]);
   const normRef = useUpdateRef(normalizedData);
+  const sortedRef = useUpdateRef(SortedData);
   const normRef2 = useUpdateRef(databaseData);
   const topRef = useUpdateRef(top);
   const normIndex = useUpdateRef(index);
@@ -125,7 +126,7 @@ function App() {
       data: [],
       grouped: [],
     });
-    console.log("getting here");
+    /*console.log("getting here");*/
   };
 
   const startCalculation = async () => {
@@ -135,7 +136,7 @@ function App() {
       setHighlightedIndex("-1");
       setHoveredData(null);
       setTop(10);
-      console.log("has started");
+      //console.log("has started");
       setSelectedDatabase(selectedDatabase);
 
       let { db, agg, grp, g1, g2 } = TranslateForURL(
@@ -145,7 +146,7 @@ function App() {
         selectedCompare1,
         selectedCompare2
       );
-      console.log(db, agg, grp, g1, g2);
+      // console.log(db, agg, grp, g1, g2);
 
       await StartCalculationWrapper(db, agg, grp, g1, g2);
 
@@ -175,7 +176,7 @@ function App() {
       const index = translateDB[selectedDatabase];
       const combinedData = await GetData(normIndex.current, index);
 
-      console.log(data);
+      //console.log(data);
       if (combinedData == null) {
         if (!normRef || normRef.current.length == 0) {
           alert(
@@ -190,7 +191,7 @@ function App() {
       const { dataUnit, grouped } = combinedData;
 
       let onlyData: FullData;
-      console.log("this is the data");
+      //console.log("this is the data");
 
       onlyData = { data: dataUnit, grouped };
 
@@ -221,7 +222,7 @@ function App() {
   };
 
   const unfoldData = (index: number) => {
-    console.log(SortedData);
+    // console.log(SortedData);
 
     setSortedData((old) => {
       if (old == null) return null;
@@ -239,22 +240,22 @@ function App() {
     explanation: string,
     modelName: string
   ) => {
-    console.log(index);
+    //  console.log(index);
 
     if (groupDataBool) {
       setSortedData((old) => {
         if (old == null) return null;
         const newData = [...old];
         return newData.map((value: any) => {
-          console.log(index.split(" and "));
+          //   console.log(index.split(" and "));
 
-          console.log(value.index == `${index.split(" and ")[0]} and 0`);
+          //   console.log(value.index == `${index.split(" and ")[0]} and 0`);
 
           if (value.index == `${index.split(" and ")[0]} and 0`) {
             value = {
               ...value,
               fullList: value.fullList.map((value2: any) => {
-                console.log(index.split(" and ")[1]);
+                // console.log(index.split(" and ")[1]);
 
                 if (value2.index == index) {
                   value2.explanation = { explanation, modelName };
@@ -289,7 +290,6 @@ function App() {
       });
     });
   };
-
   const setExample = (
     database: string,
     groupBy: number,
@@ -297,7 +297,7 @@ function App() {
     compare2: number,
     aggregateFunction: number
   ) => {
-    console.log("this is the groupby", groupBy);
+    // console.log("this is the groupby", groupBy);
 
     setSelectedDatabase(database);
     setSelectedGroupBy(groupBy);
@@ -320,6 +320,15 @@ function App() {
     setAggregateFunction(0);
     setSelectedDatabase(database);
   };
+  const [hasMoreData, setHasMoreData] = useState(true);
+
+  // Modify the useEffect that watches SortedData
+  useEffect(() => {
+    // Update hasMoreData based on current data
+    if (SortedData) {
+      setHasMoreData(SortedData.length > top || loading);
+    }
+  }, [SortedData, top, loading]);
 
   return (
     <div id="mainDiv">
@@ -395,21 +404,21 @@ function App() {
             )}
 
             <InfiniteScroll
-              dataLength={topRef.current}
-              next={() =>
-                setTop((old) => {
-                  if (SortedData == null) return 0;
+              scrollThreshold={0.2}
+              style={{ overflow: "visible" }} // Add this to prevent scroll issues
+              dataLength={top}
+              next={() => {
+                console.log("in next");
 
-                  return topRef.current + 10 > SortedData.length
-                    ? SortedData.length
-                    : topRef.current + 10;
-                })
-              }
-              hasMore={
-                loading || (SortedData != null && SortedData.length > top)
-              }
+                setTop((old) => {
+                  if (sortedRef.current == null) return 0;
+
+                  return old + 10 > sortedRef.current.length ? old : old + 10;
+                });
+              }}
+              hasMore={hasMoreData}
               loader={<h4>Loading... Don't worry, this may take a while</h4>}
-              endMessage={SortedData && SortedData.length > 0 && message()}
+              endMessage={<div>hello There</div>}
             >
               {SortedData === null ? (
                 <div id="no_data">

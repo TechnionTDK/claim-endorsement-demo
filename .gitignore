@@ -25,5 +25,6 @@ server/data/
 *.sln
 *.sw?
 .env
-server/src/database_connection_dummy.env
+server/src/database_connection.env
 server/.env
+server/src/my_config.py

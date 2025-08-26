@@ -14,6 +14,7 @@ export interface Data {
   fullList: DatabaseData[];
   unfolded: boolean;
   explanation: any;
+  uniqueKey: string;
 }
 export interface loadingStates {
   name: string;

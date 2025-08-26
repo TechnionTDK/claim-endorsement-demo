@@ -33,6 +33,7 @@ const createDataCompact = (
       unfolded: false,
       groupunfold: false,
       loadingExplaintion: false,
+      uniqueKey: data.best.Attr1_str + data.best.Attr2_str,
     };
   });
 
@@ -66,6 +67,7 @@ const createDataFull = (
       unfolded: false,
       groupunfold: false,
       loadingExplantion: false,
+      uniqueKey: data.uniqueKey,
     };
   });
 

@@ -88,18 +88,18 @@ export async function GetData(index: number, dbIndex: number) {
     `http://localhost:3005/claimendorsement/send-data?prev=${index}&dbName=${filepaths[dbIndex]}`
   );
   const data = await response.json();
+  /*
+  console.log("**************************************************");*/
+
   if (data.noData) {
     console.log("here");
 
-    alert(
-      "This query resulted in no results, please try another one hdfjkdshfjkdshjfkdsh"
-    );
+    alert("This query resulted in no results, please try another one");
     return null;
   }
   if (data.isEmpty || data.data.isEmpty) {
     return null;
   }
-  console.log(data.data);
 
   return { dataUnit: data.data, grouped: data.grouped };
 }
@@ -132,7 +132,6 @@ export async function FetchLLMData(
     function: functiont,
     modelName: modelName,
   };
-  console.log(senddata);
 
   const response = await fetch("http://localhost:3005/claimendorsement/LLM/", {
     method: "POST",

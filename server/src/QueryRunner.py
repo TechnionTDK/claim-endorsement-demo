@@ -23,7 +23,7 @@ def connect_sql_db(db_name):
     # DATABASE_NAME = os.getenv("DATABASE_NAME")
     url = sqlalchemy.engine.URL.create(
         drivername="postgresql",
-        username=os.getenv("CONNECTION_USER"),
+        username="postgres",
         host="localhost",
         port=os.getenv("SERVER_PORT"),
         password=os.getenv("CONNECTION_PASSWORD"),
