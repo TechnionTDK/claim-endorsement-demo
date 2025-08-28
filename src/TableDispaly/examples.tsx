@@ -141,8 +141,8 @@ const Examples: React.FC = () => {
         <Form.Select
           disabled={!isChangeable}
           style={{
-            height: "1.8vw",
-            fontSize: "30px",
+            height: "2vw",
+            fontSize: "1vw",
             width: "14vw",
           }}
           value={example}

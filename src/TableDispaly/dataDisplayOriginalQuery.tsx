@@ -8,7 +8,7 @@ import DataHeader from "./dataHeader";
 
 const DataDisplayOriginalQuery: React.FC = () => {
   const context = useContext(MyContext);
-  const { originalQueryData } = context!;
+  const { originalQueryData, collapse } = context!;
   console.log("Original Query Data:", originalQueryData);
 
   // Define the translation object with the specified type
@@ -17,10 +17,14 @@ const DataDisplayOriginalQuery: React.FC = () => {
       className="container"
       style={{
         backgroundColor: "#B0C4DE",
-        width: "100wv !important",
+        width: "80vw !important",
       }}
     >
-      <div className={`DataDisplay-row  `} key={`DataDisplay-Original`}>
+      <div
+        className={`DataDisplay-row ${collapse ? "collapsed" : "expanded"}`}
+        key={`DataDisplay-Original`}
+        style={{ width: "120vw !important", backgroundColor: "#B0C4DE" }}
+      >
         <div className={`font-size `} id="DataDisplay-predicate">
           <Predicate
             showIcon={false}
@@ -58,6 +62,7 @@ const DataDisplayOriginalQuery: React.FC = () => {
           id="DataDisplay-chart"
           style={{
             backgroundColor: "#B0C4DE",
+            width: collapse ? "350px" : "300px",
           }}
         >
           <div id="DataDisplay-chart_size"></div>
@@ -66,9 +71,7 @@ const DataDisplayOriginalQuery: React.FC = () => {
         <div
           className="font-size"
           id="DataDisplay-time"
-          style={{
-            backgroundColor: "#B0C4DE",
-          }}
+          style={{ backgroundColor: "#B0C4DE" }}
         >
           <div></div>
         </div>

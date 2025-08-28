@@ -20,13 +20,8 @@ const DataDisplay: React.FC<DataDisplayProps> = ({
   father,
 }) => {
   const context = useContext(MyContext);
-  const {
-    groupDataBool,
-    aggregateFunction,
-    unfoldData,
-
-    maxDiff,
-  } = context!;
+  const { groupDataBool, aggregateFunction, unfoldData, collapse, maxDiff } =
+    context!;
   // Define the translation object with the specified type
 
   const displayMoreFunc = (event: any) => {
@@ -48,7 +43,7 @@ const DataDisplay: React.FC<DataDisplayProps> = ({
         }}
         className={`DataDisplay-row ${
           highlightedIndex === dataValues.index ? "DataDisplay-highlight" : ""
-        } ${!father ? "son" : ""}`}
+        } ${!father ? "son" : ""} ${collapse ? "collapsed" : "expanded"}`}
         key={`DataDisplay-${dataValues.index}`}
         onMouseEnter={() => {
           //setHoveredData([...data.datasets]);
@@ -112,8 +107,14 @@ const DataDisplay: React.FC<DataDisplayProps> = ({
           aggregateFunction={aggregateFunctions[aggregateFunction]}
         />
 
-        <div id="DataDisplay-chart">
-          <div id="DataDisplay-chart_size">
+        <div
+          id="DataDisplay-chart"
+          style={{ width: collapse ? "350px" : "300px" }}
+        >
+          <div
+            id="DataDisplay-chart_size "
+            style={{ width: collapse ? "335px" : "290px" }}
+          >
             <Bar
               options={options}
               data={{

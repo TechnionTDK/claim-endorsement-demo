@@ -59,6 +59,7 @@ function App() {
     data: [],
     grouped: [],
   });
+  const [collapse, setCollapse] = useState(true);
   const [index, setIndex] = useState(0);
   const [intervalData, setIntervalData] = useState<number>(0);
   const [highlightedIndex, setHighlightedIndex] = useState<string>("-1");
@@ -91,7 +92,7 @@ function App() {
   const normRef = useUpdateRef(normalizedData);
   const sortedRef = useUpdateRef(SortedData);
   const normRef2 = useUpdateRef(databaseData);
-  const topRef = useUpdateRef(top);
+
   const normIndex = useUpdateRef(index);
   const intervalref = useUpdateRef(intervalData);
   const isChangeableRef = useUpdateRef(isChangeable);
@@ -334,6 +335,8 @@ function App() {
     <div id="mainDiv">
       <MyContext.Provider
         value={{
+          collapse,
+          setCollapse,
           originalQueryData,
           clearIntervalWrapper,
           maxDiff,
@@ -385,7 +388,12 @@ function App() {
       >
         <MySideBar></MySideBar>
 
-        <div style={{ width: "80vw" }}>
+        {/*<div style={{ width: "80vw" }}></div>*/}
+        <div
+          style={
+            collapse ? { width: "80vw" } : { width: "64vw", marginLeft: "16vw" }
+          }
+        >
           <TableDisplayHeader
             hoveredData={hoveredData}
             predicateText={predicateText}

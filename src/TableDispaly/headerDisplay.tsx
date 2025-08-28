@@ -16,6 +16,7 @@ const HeaderDisplay: React.FC<HeaderDisplayProps> = ({
     selectedGroupBy,
     selectedCompare1,
     selectedCompare2,
+    collapse,
   } = context!;
   const changeSort = (index: number) => {
     setSortingOptions((old) => {
@@ -24,7 +25,7 @@ const HeaderDisplay: React.FC<HeaderDisplayProps> = ({
   };
   return (
     <div id="data_div">
-      <div id="setup_div">
+      <div id="setup_div" className={collapse ? "collapsed" : "expanded"}>
         <div className="font-size" id="predicate_div">
           Predicate
         </div>

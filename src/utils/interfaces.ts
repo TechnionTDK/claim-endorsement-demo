@@ -73,6 +73,8 @@ export interface HeaderDisplayProps {
   setSortingOptions: React.Dispatch<React.SetStateAction<number[]>>;
 }
 export interface ContextType {
+  collapse: boolean;
+  setCollapse: React.Dispatch<React.SetStateAction<boolean>>;
   originalQueryData: Number[];
   clearIntervalWrapper: () => void;
   maxDiff: number;

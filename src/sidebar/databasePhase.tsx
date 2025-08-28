@@ -51,7 +51,7 @@ const DatabasePhase: React.FC<Phase1Props> = () => {
               disabled={!isChangeable}
               style={{
                 height: "1.8vw",
-                fontSize: "15.5px",
+                fontSize: "0.8vw",
                 width: "10vw",
               }}
               value={selectedDatabase}

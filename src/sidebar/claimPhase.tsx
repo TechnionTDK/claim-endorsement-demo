@@ -32,7 +32,6 @@ const ClaimPhase: React.FC<Phase2Props> = ({}) => {
     aggregateFunction,
     setAggregateFunction,
   } = context!;
-  console.log(selectedDatabase);
   useEffect(() => {
     setDisplay(groupByOptions[selectedDatabase][selectedGroupBy]);
   }, []);
@@ -43,18 +42,18 @@ const ClaimPhase: React.FC<Phase2Props> = ({}) => {
   const sty = {
     control: (styles: any) => ({
       ...styles,
-      height: "1.8vw",
-      fontSize: "0.6vw",
+      height: "2vw",
+      fontSize: "1vw",
       textAlign: "left",
     }),
 
     singleValue: (provided: any) => ({
       ...provided,
-      fontSize: "0.8vw", // Change this to your desired font size
+      fontSize: "1vw", // Change this to your desired font size
     }),
     option: (provided: any) => ({
       ...provided,
-      fontSize: "0.8vw", // Change this to your desired font size
+      fontSize: "1vw", // Change this to your desired font size
       wordBreak: "break-word", // Break words to fit within the container
       hyphens: "auto", // Add hyphens where appropriate
     }),
@@ -116,7 +115,8 @@ const ClaimPhase: React.FC<Phase2Props> = ({}) => {
         <div
           style={{
             display: "grid",
-            width: "10vw",
+            width: "100%",
+
             gridTemplateColumns: "1fr 1fr ",
           }}
         >
@@ -128,7 +128,7 @@ const ClaimPhase: React.FC<Phase2Props> = ({}) => {
           >
             <Form.Select
               disabled={!isChangeable}
-              style={{ height: "2vw", fontSize: "0.8vw", width: "5vw" }}
+              style={{ height: "2.1vw", fontSize: "1vw", width: "100%" }}
               id="aggregateFunction"
               value={aggregateFunctions[aggregateFunction]}
               onChange={(e) =>
@@ -144,7 +144,7 @@ const ClaimPhase: React.FC<Phase2Props> = ({}) => {
           </div>
           <div
             style={{
-              fontSize: "1vw",
+              fontSize: "0.8vw",
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
@@ -154,7 +154,7 @@ const ClaimPhase: React.FC<Phase2Props> = ({}) => {
           >
             <Form.Select
               disabled={!isChangeable}
-              style={{ height: "2vw", fontSize: "0.8vw", width: "8vw" }}
+              style={{ height: "2.1vw", fontSize: "1vw", width: "100%" }}
               id="groupattr"
               value={compareTitle[selectedDatabase]}
               onChange={(e) => {}}
