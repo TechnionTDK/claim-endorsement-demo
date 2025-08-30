@@ -72,7 +72,7 @@ function App() {
   const [groupDataBool, setGroupDataBool] = useState(false);
   const [top, setTop] = useState(10);
   const [data, setData] = useState<Data[] | null>(null);
-  const [SortedData, setSortedData] = useState<Data[] | null>(null);
+  const [sortedData, setSortedData] = useState<Data[] | null>(null);
   const [hoveredData, setHoveredData] = useState<Dataset[] | null>(null);
   const [normalizedData, setNormalizedData] = useState<DataType[]>([
     { value: 100, name: "0" },
@@ -90,7 +90,7 @@ function App() {
     0, 0, 0, 0,
   ]);
   const normRef = useUpdateRef(normalizedData);
-  const sortedRef = useUpdateRef(SortedData);
+  const sortedRef = useUpdateRef(sortedData);
   const normRef2 = useUpdateRef(databaseData);
 
   const normIndex = useUpdateRef(index);
@@ -114,9 +114,9 @@ function App() {
       setIsChangeable(false);
       return;
     }
-    if (SortedData) return;
+    if (sortedData) return;
     setIsChangeable(true);
-  }, [intervalData, SortedData]);
+  }, [intervalData, sortedData]);
   const stopCalculation = async () => {
     setIsChangeable(true);
     setLoading(false);
@@ -326,15 +326,16 @@ function App() {
   // Modify the useEffect that watches SortedData
   useEffect(() => {
     // Update hasMoreData based on current data
-    if (SortedData) {
-      setHasMoreData(SortedData.length > top || loading);
+    if (sortedData) {
+      setHasMoreData(sortedData.length > top || loading);
     }
-  }, [SortedData, top, loading]);
+  }, [sortedData, top, loading]);
 
   return (
     <div id="mainDiv">
       <MyContext.Provider
         value={{
+          dataArrayLength: sortedData ? sortedData.length : 0,
           collapse,
           setCollapse,
           originalQueryData,
@@ -432,26 +433,28 @@ function App() {
                   <div></div>
                 )
               }
-              endMessage={SortedData && SortedData.length > 0 && message()}
+              endMessage={sortedData && sortedData.length > 0 && message()}
             >
-              {SortedData === null ? (
+              {sortedData === null ? (
                 <div id="no_data">
                   {" "}
                   <h2>This is where the data will be displayed.</h2>
                 </div>
               ) : (
-                SortedData.slice(0, top).map((dataValues, index) => (
-                  <DataDisplay
-                    key={index}
-                    dataValues={dataValues}
-                    index={index}
-                    setPredicateText={setPredicateText}
-                    setHoveredData={setHoveredData}
-                    highlightedIndex={highlightedIndex}
-                    setHighlightedIndex={setHighlightedIndex}
-                    father={true}
-                  ></DataDisplay>
-                ))
+                sortedData
+                  .slice(0, top)
+                  .map((dataValues, index) => (
+                    <DataDisplay
+                      key={index}
+                      dataValues={dataValues}
+                      index={index}
+                      setPredicateText={setPredicateText}
+                      setHoveredData={setHoveredData}
+                      highlightedIndex={highlightedIndex}
+                      setHighlightedIndex={setHighlightedIndex}
+                      father={true}
+                    ></DataDisplay>
+                  ))
               )}
             </InfiniteScroll>
           </div>

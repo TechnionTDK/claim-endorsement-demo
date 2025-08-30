@@ -73,6 +73,7 @@ export interface HeaderDisplayProps {
   setSortingOptions: React.Dispatch<React.SetStateAction<number[]>>;
 }
 export interface ContextType {
+  dataArrayLength: number;
   collapse: boolean;
   setCollapse: React.Dispatch<React.SetStateAction<boolean>>;
   originalQueryData: Number[];

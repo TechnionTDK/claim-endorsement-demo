@@ -11,7 +11,26 @@ const TableDisplayHeader: React.FC<any> = ({
   setSortingOptions,
 }) => {
   const context = useContext(MyContext);
-  const { collapse } = context!;
+  const { collapse, dataArrayLength, loading } = context!;
+  const getTextForData = () => {
+    if (loading) {
+      return (
+        <div
+          style={{ textAlign: "left", marginLeft: "10px", marginTop: "10px" }}
+        >
+          <b>{dataArrayLength} </b> results have been fetched so far.
+        </div>
+      );
+    } else {
+      return (
+        <div
+          style={{ textAlign: "left", marginLeft: "10px", marginTop: "10px" }}
+        >
+          <b>{dataArrayLength} </b> results found.
+        </div>
+      );
+    }
+  };
   return (
     <div>
       {hoveredData === null ? null : (
@@ -23,13 +42,13 @@ const TableDisplayHeader: React.FC<any> = ({
         sortingOptions={sortingOptions}
         setSortingOptions={setSortingOptions}
       ></HeaderDisplay>
-
+      {dataArrayLength > 0 && getTextForData()}
       {/*style={{ marginTop: "25px", width: "80vw" }}*/}
       <div
         style={
           collapse
-            ? { marginTop: "25px", width: "80vw" }
-            : { marginTop: "25px", width: "64vw" }
+            ? { marginTop: "15px", width: "80vw" }
+            : { marginTop: "15px", width: "64vw" }
         }
         className="seperation-Line"
       ></div>
