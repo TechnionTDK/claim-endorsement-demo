@@ -269,7 +269,7 @@ if __name__ == "__main__":
         "SO": "data/SO/results/demo_test.csv",
         "ACS7": "data/Folkstable/SevenStates/results/demo_test.csv",
         "FLIGHTS": "data/flights/results/demo_test.csv",
-        "hm": "data/hm/results/demo_test.csv",
+        "HM": "data/hm/results/demo_test.csv",
         "diabetes": "data/diabetes2/results/demo_test.csv",
         "zillow": "data/zillow/results/demo_test.csv"
     }

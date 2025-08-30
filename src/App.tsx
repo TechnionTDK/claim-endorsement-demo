@@ -413,7 +413,7 @@ function App() {
             )}
 
             <InfiniteScroll
-              scrollThreshold={0.2}
+              scrollThreshold={0.5}
               style={{ overflow: "visible" }} // Add this to prevent scroll issues
               dataLength={top}
               next={() => {

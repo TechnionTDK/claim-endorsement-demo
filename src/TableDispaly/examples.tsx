@@ -12,7 +12,7 @@ const dataBaseOptions2 = [
   "(Zillow) Price of houses with 2 bedrooms is higher than 4 bedrooms",
   "(Zillow) Price of houses built in 2005-2009 is higher than 2000-2004",
   "(H&M) 40 year olds buy more than 25 year olds",
-  "(US Census) Men earn more than Women on avarage",
+  "(US Census) Women earn more than Men on avarage",
   "(US Flights) There are more delays on Saturdays than on Mondays",
 ];
 const Examples: React.FC = () => {
@@ -88,7 +88,7 @@ const Examples: React.FC = () => {
         ),
       aggregateFunction: 0,
     },
-    "(US Census) Men earn more than Women on avarage": {
+    "(US Census) Women earn more than Men on avarage": {
       name: "US Census",
       groupBy: groupByOptions["US Census"].indexOf("Sex"),
       compare1: 0,
@@ -107,7 +107,7 @@ const Examples: React.FC = () => {
       groupBy: groupByOptions["HM"].indexOf("Age"),
       compare1: HMCompareValues.Age.indexOf("25"),
       compare2: HMCompareValues.Age.indexOf("40"),
-      aggregateFunction: 0,
+      aggregateFunction: 2,
     },
   };
 
