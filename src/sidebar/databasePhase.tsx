@@ -17,7 +17,8 @@ import { MyContext } from "../App.tsx";
 const DatabasePhase: React.FC<Phase1Props> = () => {
   const context = useContext(MyContext);
 
-  const { setSelectedDatabase, selectedDatabase, isChangeable } = context!;
+  const { setSelectedDatabase, selectedDatabase, isChangeable, collapse } =
+    context!;
 
   return (
     <div>
@@ -50,9 +51,9 @@ const DatabasePhase: React.FC<Phase1Props> = () => {
             <Form.Select
               disabled={!isChangeable}
               style={{
-                height: "1.8vw",
-                fontSize: "0.8vw",
-                width: "10vw",
+                height: "2vw",
+                fontSize: "1vw",
+                width: collapse ? "10vw" : "20vw",
               }}
               value={selectedDatabase}
               onChange={(e) => setSelectedDatabase(e.target.value)}

@@ -425,13 +425,19 @@ function App() {
                 });
               }}
               hasMore={hasMoreData}
-              loader={<h4>Loading... Don't worry, this may take a while</h4>}
-              endMessage={<div>hello There</div>}
+              loader={
+                loading ? (
+                  <h4>Loading data. This may take a while...</h4>
+                ) : (
+                  <div></div>
+                )
+              }
+              endMessage={SortedData && SortedData.length > 0 && message()}
             >
               {SortedData === null ? (
                 <div id="no_data">
                   {" "}
-                  <div>this is where the data will be displayed</div>
+                  <h2>This is where the data will be displayed.</h2>
                 </div>
               ) : (
                 SortedData.slice(0, top).map((dataValues, index) => (

@@ -17,7 +17,7 @@ const dataBaseOptions2 = [
 ];
 const Examples: React.FC = () => {
   const context = useContext(MyContext);
-  const { isChangeable, setExample } = context!;
+  const { isChangeable, setExample, collapse } = context!;
 
   const [example, setExampleState] = useState("None");
 
@@ -143,7 +143,7 @@ const Examples: React.FC = () => {
           style={{
             height: "2vw",
             fontSize: "1vw",
-            width: "14vw",
+            width: collapse ? "14vw" : "28vw",
           }}
           value={example}
           onChange={(e) => selectExample(e)}
